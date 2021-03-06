@@ -4,7 +4,8 @@ module.exports = {
     args: true,
     usage: '!args-info <arg1> <arg2> ... <argN>',
     guildOnly: true,
-    
+    cooldown: 3,
+
 	execute(message, args) {
 
 		if (args[0] === 'foo') {
