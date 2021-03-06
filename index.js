@@ -41,6 +41,14 @@ client.on('message', message => {
         return message.reply('I can\'t execute that command within DMs!');
     }
 
+    // Check if command has permissions
+    if (command.permissions) {
+        const authorPerms = message.channel.permissionsFor(message.author);
+        if (!authorPerms || !authorPerms.has(command.permissions)) {
+            return message.reply('You do not have the power to do that!');
+        }
+    }
+
     // Check if command has args set to True, also returns a usage statement if user errors
     if (command.args && !args.length) {
         let reply = `You didn't provide any arguments, ${message.author}!`;
