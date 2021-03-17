@@ -4,7 +4,7 @@ const cooldowns = new Discord.Collection();
 
 module.exports = {
     name: 'message',
-    execute(message, client) {
+    execute(message, client, dbClient) {
 
         if (!message.content.startsWith(prefix) || message.author.bot) return;
 
@@ -59,7 +59,7 @@ module.exports = {
     
         // Execute the command
         try {
-            command.execute(message, args);
+            command.execute(message, args, dbClient);
     
         } catch (error) {
             console.error(error);
