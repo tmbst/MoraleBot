@@ -30,8 +30,10 @@ module.exports = {
     async readLastDailyClaimed(guildID, userID, dbClient) {
         const db = dbClient.db();
         const col = db.collection(dbColName);
+        const doc = await col.findOne({"guildID": guildID, "guildMemberID": userID});
 
-   
+        return doc.guildMemberDailyClaimed
+
     },
     // Read the balance of the guild member
     async readBalance(guildID, userID, dbClient) {
@@ -40,6 +42,22 @@ module.exports = {
         const doc = await col.findOne({"guildID": guildID, "guildMemberID": userID});
 
         return doc.guildMemberBalance;
-    }
+    },
+    // Update dailies claimed
+    async updateDailiesClaimed(guildID, userID, currDateTime, dbClient) {
+        const db = dbClient.db();
+        const col = db.collection(dbColName);
 
+        await col.updateOne({"guildID": guildID, "guildMemberID": userID}, {$set:{guildMemberDailyClaimed: currDateTime}});
+    },
+    // Update the balance of the guild member
+    async updateBalance(guildID, userID, amount, dbClient) {
+        const db = dbClient.db();
+        const col = db.collection(dbColName);
+
+        const currBalance = await this.readBalance(guildID, userID, dbClient);
+        const updatedBalance = currBalance + amount;
+
+        await col.updateOne({"guildID": guildID, "guildMemberID": userID}, {$set:{guildMemberBalance: updatedBalance}});
+    },
 }
