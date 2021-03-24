@@ -14,16 +14,16 @@ module.exports = {
 
         const num = Math.floor(Math.random() * 2);
         const map = {0:'heads',1:'tails'};
+        const regex = new RegExp(/^\d+$/);
 
         let heads = false;
         let tails = false;
         let bet = 0;
 
         // User passes a valid bet as an argument, allow them to gamble their moralies
-        if (args.length > 0 && Number.isInteger(parseInt(args[0]))){
+        if (args.length > 0 && regex.test(args[0])){
             bet = args[0];
             const balance = await database.readBalance(message.guild.id, message.member.user.id, dbClient);
-            
             if (bet > balance) {
                 message.reply("Your current balance is to low for this bet!");
                 return;
@@ -55,8 +55,8 @@ module.exports = {
                 if ((num == 0 && heads) || (num == 1 && tails)) {
                     message.reply(`You won!!! The flip was ${map[num]}!!`);
                     if (bet != 0) {
-                        message.channel.send(`You won ${2*bet} moralies!`);
-                        await database.updateBalance(message.guild.id, message.member.user.id, 2*bet, dbClient);
+                        message.channel.send(`You won ${bet} moralies!`);
+                        await database.updateBalance(message.guild.id, message.member.user.id, bet, dbClient);
                     }
                 }
                 else {

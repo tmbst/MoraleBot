@@ -56,7 +56,7 @@ module.exports = {
         const col = db.collection(dbColName);
 
         const currBalance = await this.readBalance(guildID, userID, dbClient);
-        const updatedBalance = currBalance + amount;
+        const updatedBalance = currBalance + parseInt(amount);
 
         await col.updateOne({"guildID": guildID, "guildMemberID": userID}, {$set:{guildMemberBalance: updatedBalance}});
     },
