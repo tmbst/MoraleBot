@@ -6,6 +6,7 @@
 * Balance - Check how much moralies you have.
 * Daily - Claim your daily moralies. Resets every 24 hours.
 * Poll - Creates a Discord Embed resembling a poll. React to vote on the poll!
+* Coinflip - Performs a coin flip. Optionally you can also bet your moralies!
 
 ### Utility
 * Help - Offers information on commands and usages.
