@@ -5,7 +5,7 @@ const { DateTime, Duration } = require('luxon');
 module.exports = {
 	name: 'daily',
 	aliases: ['dailies'],
-	description: 'Obtain your daily moralies.',
+	description: 'Obtain your daily Morale.',
 	args: false,
 	usage: '!daily',
 	guildOnly: true,
@@ -26,7 +26,7 @@ module.exports = {
 			await database.updateBalance(message.guild.id, message.member.user.id, dailyAmount, dbClient);
 			await database.updateDailiesClaimed(message.guild.id, message.member.user.id, currDateTime, dbClient);
 
-			message.reply(`Successfully claimed ${dailyAmount} moralies.`);
+			message.reply(`Successfully claimed ${dailyAmount} Morale.`);
 		}
 	},
 };

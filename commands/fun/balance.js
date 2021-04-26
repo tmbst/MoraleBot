@@ -13,7 +13,7 @@ module.exports = {
 		
         const balance = await database.readBalance(message.guild.id, message.member.user.id, dbClient);
 
-        message.reply(`you have ${balance} moralies.`);
+        message.reply(`You have ${balance} Morale.`);
 
 	},
 };

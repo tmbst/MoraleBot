@@ -13,7 +13,7 @@ module.exports = {
             'guildMemberID' : userData.id,
             'guildMemberName' : userData.username,
             'guildMemberBalance' : 0,
-            'guildMemberDailyClaimed' : Date.now()  // Figure out how to set timestamps in MongoDB, needs to be the beginning of time
+            'guildMemberDailyClaimed' : new Date(0)
         }
 
         await col.insertOne(guildMemberDocument);

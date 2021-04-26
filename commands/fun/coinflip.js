@@ -55,14 +55,14 @@ module.exports = {
                 if ((num == 0 && heads) || (num == 1 && tails)) {
                     message.reply(`You won!!! The flip was ${map[num]}!!`);
                     if (bet != 0) {
-                        message.channel.send(`You won ${bet} moralies!`);
+                        message.channel.send(`You won ${bet} Morale!`);
                         await database.updateBalance(message.guild.id, message.member.user.id, bet, dbClient);
                     }
                 }
                 else {
                     message.reply(`You lost. The flip was ${map[num]}.`);
                     if (bet != 0) {
-                        message.channel.send(`You lost ${bet} moralies.`)
+                        message.channel.send(`You lost ${bet} Morale.`)
                         await database.updateBalance(message.guild.id, message.member.user.id, -bet, dbClient);
                     }
                 }
