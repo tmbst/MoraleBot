@@ -20,6 +20,6 @@ module.exports = {
         channel.send(leavingEmbed);
 
         // DB delete user
-        database.deleteGuildMember(member.guild, member.user, dbClient);
+        database.deleteGuildMember(member.guild.id, member.user.id, dbClient);
     },
 }

@@ -30,7 +30,7 @@ module.exports = {
 
                 });
                 
-                dispatcher.on('[!daivd] ERROR', console.error);
+                dispatcher.on('[!david] ERROR', console.error);
                 
 
             }
@@ -48,7 +48,7 @@ module.exports = {
     
                 });
                 
-                dispatcher.on('[!daivd] ERROR', console.error);
+                dispatcher.on('[!david] ERROR', console.error);
             }
 
         }

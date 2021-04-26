@@ -19,14 +19,41 @@ module.exports = {
         await col.insertOne(guildMemberDocument);
     },
     // Delete a guild member from the Database
-    async deleteGuildMember(guildData, userData, dbClient) {
+    async deleteGuildMember(guildDataID, userDataID, dbClient) {
 
         const db = dbClient.db();
         const col = db.collection(dbColName);
+        const doc = await col.findOne({"guildID": guildDataID, "guildMemberID": userDataID});
+        const name = doc.guildMemberName;
 
-        await col.deleteOne({'guildID': guildData.id, 'guildMemberID': userData.id});
+        await col.deleteOne({'guildID': guildDataID, 'guildMemberID': userDataID});
+
+        return name;
     },
-    // TODO: Read the last daily claimed by a guild member
+    // Check for any guild members that joined while the bot was offline
+    async checkNewbieGuildMembers(discordGuildMembers, dbClient) {
+        const mongoGuildMembers = [];
+        const db = dbClient.db();
+        const col = db.collection(dbColName);
+        const cursor = col.find({});
+        await cursor.forEach(doc => mongoGuildMembers.push(doc.guildMemberID));
+
+        const difference = discordGuildMembers.filter(x => !mongoGuildMembers.includes(x));
+
+        return difference;
+    },
+    async checkRetiredGuildMembers(discordGuildMembers, dbClient) {
+        const mongoGuildMembers = [];
+        const db = dbClient.db();
+        const col = db.collection(dbColName);
+        const cursor = col.find({});
+        await cursor.forEach(doc => mongoGuildMembers.push(doc.guildMemberID));
+
+        const difference = mongoGuildMembers.filter(x => !discordGuildMembers.includes(x));
+
+        return difference;
+    },
+    // Read the last daily claimed by a guild member
     async readLastDailyClaimed(guildID, userID, dbClient) {
         const db = dbClient.db();
         const col = db.collection(dbColName);
