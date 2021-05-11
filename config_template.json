@@ -1,0 +1,8 @@
+{
+    "token": "DiscordBotTokenGoesHere",
+    "prefix": "!",
+    "dailyAmount": 500,
+    "dailyReset" : 86400000,
+    "ownerID": 11111111111111111,
+    "mongoURI": "ClusterConnectionURILinkGoesHere"
+}
