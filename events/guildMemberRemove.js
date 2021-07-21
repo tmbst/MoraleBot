@@ -1,13 +1,12 @@
 const database = require('../database/dbFunctions');
 const Discord = require('discord.js');
+const { botChannelID } = require('../config.json');
 
 module.exports = {
     name: 'guildMemberRemove',
 
     execute(member, client, dbClient) {
-        // Swap this channelID for the TMBST channelID
-        const channelID = '571250035086589973';
-        
+
         const leavingEmbed = new Discord.MessageEmbed()
                 .setColor('FF0000')
                 .setAuthor(member.user.username + '#' + member.user.discriminator, member.user.displayAvatarURL())
@@ -15,7 +14,7 @@ module.exports = {
                 .setDescription('They are no longer a member of Team Morale Boost.')
                 .setTimestamp();
 
-        const channel = member.guild.channels.cache.get(channelID);
+        const channel = member.guild.channels.cache.get(botChannelID);
 
         channel.send(leavingEmbed);
 

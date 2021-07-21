@@ -4,5 +4,6 @@
     "dailyAmount": 500,
     "dailyReset" : 86400000,
     "ownerID": 11111111111111111,
-    "mongoURI": "ClusterConnectionURILinkGoesHere"
+    "mongoURI": "ClusterConnectionURILinkGoesHere",
+    "botChannelID": "11111111111111111"
 }
