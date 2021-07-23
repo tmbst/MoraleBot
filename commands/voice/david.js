@@ -18,7 +18,7 @@ module.exports = {
             // Play David's god dammit line specifically
             if (args[0] === 'goddammit') {
                 
-                const dispatcher = connection.play(require("path").join(__dirname, `../../sounds/godDammit.wav`), {volume: 0.75});
+                const dispatcher = connection.play(require("path").join(__dirname, `../../assets/sounds/godDammit.wav`), {volume: 0.75});
 
                 dispatcher.on('start', () => {
                     console.log(`[!david] An audio file is now playing!`);
@@ -35,9 +35,9 @@ module.exports = {
 
             }
             else {
-                const files = fs.readdirSync('./sounds/');
+                const files = fs.readdirSync('./assets/sounds/');
                 const randomFile = files[Math.floor(Math.random() * files.length)];
-                const dispatcher = connection.play(require("path").join(__dirname, `../../sounds/${randomFile}`), {volume: 0.75});
+                const dispatcher = connection.play(require("path").join(__dirname, `../../assets/sounds/${randomFile}`), {volume: 0.75});
 
                 dispatcher.on('start', () => {
                     console.log(`[!david] An audio file is now playing!`);

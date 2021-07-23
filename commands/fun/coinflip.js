@@ -8,7 +8,7 @@ module.exports = {
 	args: false,
 	usage: '!coinflip, !coinflip [bet]',
 	guildOnly: true,
-	cooldown: 1,
+	cooldown: 8,
 
 	async execute(message, args, dbClient) {
 
@@ -38,7 +38,7 @@ module.exports = {
         };
 
         // Wait for the user to react with H or T
-        botMessage.awaitReactions(filter, {max: 1, time: 60000, errors: ['time'] })
+        botMessage.awaitReactions(filter, {max: 1, time: 8000, errors: ['time'] })
             .then(async collected => {
                 const reaction = collected.first();
 

@@ -1,5 +1,5 @@
 const database = require('../../database/dbFunctions');
-const { dailyAmount, dailyReset } = require('../../config.json');
+const { dailyAmount, dailyReset, boostedRoleID } = require('../../config.json');
 const { DateTime, Duration } = require('luxon');
 
 module.exports = {
@@ -23,10 +23,18 @@ module.exports = {
 			message.reply(`Dailies already claimed. Time remaining: ${timeRemaining.toFormat("h")}h, ${timeRemaining.toFormat("m") % 60}m`);
 		}
 		else {
-			await database.updateBalance(message.guild.id, message.member.user.id, dailyAmount, dbClient);
-			await database.updateDailiesClaimed(message.guild.id, message.member.user.id, currDateTime, dbClient);
+			// Check if the member boosted the server, if so give them a 1.5x multiplier to their dailies
+			if (message.member.roles.cache.has(boostedRoleID)){
+				await database.updateBalance(message.guild.id, message.member.user.id, dailyAmount * 1.5, dbClient);
+				message.reply(`Successfully claimed ${dailyAmount * 1.5} Morale. You get a 1.5x multiplier for boosting the server!`);
+			}
+			else {
+				await database.updateBalance(message.guild.id, message.member.user.id, dailyAmount, dbClient);
+				message.reply(`Successfully claimed ${dailyAmount} Morale.`);
+			}
 
-			message.reply(`Successfully claimed ${dailyAmount} Morale.`);
+			await database.updateDailiesClaimed(message.guild.id, message.member.user.id, currDateTime, dbClient);
+			
 		}
 	},
 };
