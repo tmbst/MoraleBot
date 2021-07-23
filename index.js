@@ -10,20 +10,14 @@ const { MongoClient } = require('mongodb');
 const dbClient = new MongoClient(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 async function run(){
-
     try {
         // Connect to the MongoDB cluster
         await dbClient.connect();
         console.log("[MongoDB] Connected to MongoDB Servers.");
 
     } catch (error) {
-
         console.error(error);
-        
-    } //finally {
-
-    //     await dbClient.close();
-    // }
+    } 
 }
 run().catch(console.error);
 

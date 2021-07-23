@@ -16,7 +16,7 @@ module.exports = {
 
             const connection = await message.member.voice.channel.join();
 
-            const dispatcher = connection.play(require("path").join(__dirname, `../../sounds/bonkSound2.mp3`), {volume: 0.75});
+            const dispatcher = connection.play(require("path").join(__dirname, `../../assets/sounds/bonkSound2.mp3`), {volume: 0.75});
 
             dispatcher.on('start', () => {
                 console.log(`[!bonk] An audio file is now playing!`);
