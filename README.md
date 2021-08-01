@@ -16,8 +16,8 @@
 * Restart - Command that refreshes the database if users leave or join while the bot is offline.
 
 ### Voice
-* Bonk - Plays Bonk Sound Effect #2
-* David - Plays a random david sound clip
+* Play - Plays various audio files that comes included with the bot.
+* Disconnect - Manually disconnect the bot from voice chat.
 
 ## Contributing to the Project
 Team Morale Boost Discord server members are welcome to contribute to the Discord Bot.
