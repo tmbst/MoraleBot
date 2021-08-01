@@ -3,7 +3,7 @@ FROM node:latest
 # Install system dependencies
 RUN set -x \
     && apt-get update \
-    && apt-get -yq install git git-lfs \
+    && apt-get -yq install git \
     && apt-get -yq clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
     && git --version && npm -v && node -v
