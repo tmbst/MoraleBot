@@ -2,7 +2,9 @@ const Discord = require('discord.js');
 const fs = require('fs');
 const { token, mongoURI } = require('./config.json');
 
-const client = new Discord.Client();
+const client = new Discord.Client({                                             
+    ws: { intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_MEMBERS", "GUILD_VOICE_STATES"] },               
+  });
 client.commands = new Discord.Collection();
 
 // MongoDB
