@@ -27,7 +27,7 @@ All sound files for voice commands are stored using Git-LFS. Please install Git-
 
     git lfs install
 
-**Note:** If you do not install Git-LFS, git will only download pointers to the sound files.
+**Note:** If you do not install Git-LFS, git will only download pointers to the sound files. Run ``git lfs fetch`` after you install and configure Git-LFS to download the sounds.
 
 ### Dockerfile
 
