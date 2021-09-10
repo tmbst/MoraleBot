@@ -1,8 +1,7 @@
-const database = require('../../database/dbFunctions');
-const { boostedRoleID } = require('../../config.json');
+const dbFunctions = require('../../database/dbFunctions');
+const { boostedRoleId } = require('../../config.json');
 const Canvas = require('canvas');
-const Discord = require("discord.js");
-const path = require('path');
+const { MessageAttachment } = require('discord.js');const path = require('path');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
 module.exports = {
@@ -10,7 +9,7 @@ module.exports = {
 		.setName('balance')
 		.setDescription('Check your balance.'),
 
-	async execute(message, args, dbClient) {
+	async execute(interaction) {
 		
 		// Function for formatting canvas text on an image
 		const applyText = (canvas, text) => {
@@ -26,7 +25,7 @@ module.exports = {
 		}
 
 		// Function for creating a new canvas image
-		const createCanvas = async (message, dbClient) => {
+		const createCanvas = async (interaction) => {
 			
 			// Create new Canvas with dimensions of tmbst_wallet.png
 			Canvas.registerFont('./assets/fonts/Futura Now Headline Bd.otf', {family: 'Futura'})
@@ -38,7 +37,7 @@ module.exports = {
 
 			let background;
 
-			if (message.member.roles.cache.has(boostedRoleID)){
+			if (interaction.member.roles.cache.has(boostedRoleId)){
 				background = await Canvas.loadImage(path.resolve(__dirname, '../../assets/images/tmbst_wallet_nitro.png'));
 			}
 			else {
@@ -47,24 +46,24 @@ module.exports = {
 
 			// Canvas setup: Font size, Font, style, etc.
 			ctx.drawImage(background, 0 , 0, canvas.width, canvas.height);
-			ctx.font = applyText(canvas, `${message.member.displayName}`);
+			ctx.font = applyText(canvas, `${interaction.member.displayName}`);
 			ctx.fillStyle = '#ffffff'
 		
 			// Set the Display Name on the on the canvas
-			ctx.fillText(`${message.member.displayName}`, 30, 285);
+			ctx.fillText(`${interaction.member.displayName}`, 30, 285);
 
 			// Fetch & Set the balance on the canvas
-			const balance = await database.readBalance(message.guild.id, message.member.user.id, dbClient);
+			const balance = await dbFunctions.readBalance(interaction.guild.id, interaction.member.user.id);
 			ctx.font = applyText(canvas, `${balance}`);
 			ctx.fillText(`${balance}`, 100, 170);
 
-			const attachment = new Discord.MessageAttachment(canvas.toBuffer(), 'tmbst_wallet.png');
+			const attachment = new MessageAttachment(canvas.toBuffer(), 'tmbst_wallet.png');
 			
 			return attachment;
 		}
 
-		const attachment = await createCanvas(message, dbClient);
+		const attachment = await createCanvas(interaction);
 
-		message.channel.send(attachment);
+		interaction.reply({files : [attachment]});
 	},
 };

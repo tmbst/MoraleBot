@@ -1,5 +1,5 @@
-const database = require('../../database/dbFunctions');
-const { dailyAmount, dailyReset, boostedRoleID } = require('../../config.json');
+const dbFunctions = require('../../database/dbFunctions');
+const { dailyAmount, dailyReset, boostedRoleId } = require('../../config.json');
 const { DateTime, Duration } = require('luxon');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
@@ -8,29 +8,29 @@ module.exports = {
 		.setName('daily')
 		.setDescription('Obtain your dailies.'),
 
-	async execute(message, args, dbClient) {
+	async execute(interaction) {
 		
-		const lastDailyClaimed = await database.readLastDailyClaimed(message.guild.id, message.member.user.id, dbClient);
+		const lastDailyClaimed = await dbFunctions.readLastDailyClaimed(interaction.guild.id, interaction.member.user.id);
 		const currDateTime = DateTime.now().toMillis();
-		const difference = Math.floor(dailyReset - (currDateTime - lastDailyClaimed))
+		const difference = Math.floor(dailyReset - (currDateTime - lastDailyClaimed));
 		
 		if (difference > 0){
 			const timeRemaining = Duration.fromMillis(difference);
 
-			message.reply(`Dailies already claimed. Time remaining: ${timeRemaining.toFormat("h")}h, ${timeRemaining.toFormat("m") % 60}m`);
+			interaction.reply(`Dailies already claimed. Time remaining: ${timeRemaining.toFormat("h")}h, ${timeRemaining.toFormat("m") % 60}m`);
 		}
 		else {
 			// Check if the member boosted the server, if so give them a 1.5x multiplier to their dailies
-			if (message.member.roles.cache.has(boostedRoleID)){
-				await database.updateBalance(message.guild.id, message.member.user.id, dailyAmount * 1.5, dbClient);
-				message.reply(`Successfully claimed ${dailyAmount * 1.5} Morale. You get a 1.5x multiplier for boosting the server!`);
+			if (interaction.member.roles.cache.has(boostedRoleId)){
+				await dbFunctions.updateBalance(interaction.guild.id, interaction.member.user.id, dailyAmount * 1.5);
+				interaction.reply(`Successfully claimed ${dailyAmount * 1.5} Morale. You get a 1.5x multiplier for boosting the server!`);
 			}
 			else {
-				await database.updateBalance(message.guild.id, message.member.user.id, dailyAmount, dbClient);
-				message.reply(`Successfully claimed ${dailyAmount} Morale.`);
+				await dbFunctions.updateBalance(interaction.guild.id, interaction.member.user.id, dailyAmount);
+				interaction.reply(`Successfully claimed ${dailyAmount} Morale.`);
 			}
 
-			await database.updateDailiesClaimed(message.guild.id, message.member.user.id, currDateTime, dbClient);
+			await dbFunctions.updateDailiesClaimed(interaction.guild.id, interaction.member.user.id, currDateTime);
 			
 		}
 	},
