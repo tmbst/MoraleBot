@@ -1,14 +1,11 @@
 const fs = require('fs');
 const { connect } = require('http2');
+const { SlashCommandBuilder } = require('@discordjs/builders');
 
 module.exports = {
-    name: 'play',
-    aliases: ['vc'],
-    description: 'Connect bot to voice chat and play request',
-    args: true,
-    usage: '!play [input], where input can be any of the following: david, goddammit, pepperoncini, bonk, joey',
-    guildOnly: true,
-    cooldown: 1,
+	data: new SlashCommandBuilder()
+		.setName('play')
+		.setDescription('Play audio files.'),
 
     async execute(message, args) {
 

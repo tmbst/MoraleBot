@@ -1,15 +1,12 @@
 const database = require('../../database/dbFunctions');
 const { dailyAmount, dailyReset, boostedRoleID } = require('../../config.json');
 const { DateTime, Duration } = require('luxon');
+const { SlashCommandBuilder } = require('@discordjs/builders');
 
 module.exports = {
-	name: 'daily',
-	aliases: ['dailies'],
-	description: 'Obtain your daily Morale.',
-	args: false,
-	usage: '!daily',
-	guildOnly: true,
-	cooldown: 3,
+	data: new SlashCommandBuilder()
+		.setName('daily')
+		.setDescription('Obtain your dailies.'),
 
 	async execute(message, args, dbClient) {
 		

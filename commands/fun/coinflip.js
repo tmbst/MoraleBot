@@ -1,14 +1,11 @@
 const Discord = require("discord.js");
 const database = require('../../database/dbFunctions');
+const { SlashCommandBuilder } = require('@discordjs/builders');
 
 module.exports = {
-	name: 'coinflip',
-	aliases: ['coin', 'flip'],
-	description: 'Heads or Tails...',
-	args: false,
-	usage: '!coinflip, !coinflip [bet]',
-	guildOnly: true,
-	cooldown: 8,
+	data: new SlashCommandBuilder()
+		.setName('coinflip')
+		.setDescription('Flip a coin!'),
 
 	async execute(message, args, dbClient) {
 

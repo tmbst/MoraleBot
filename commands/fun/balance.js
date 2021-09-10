@@ -3,15 +3,12 @@ const { boostedRoleID } = require('../../config.json');
 const Canvas = require('canvas');
 const Discord = require("discord.js");
 const path = require('path');
+const { SlashCommandBuilder } = require('@discordjs/builders');
 
 module.exports = {
-	name: 'balance',
-	aliases: ['balance','bank'],
-	description: 'Check your balance.',
-	args: false,
-	usage: '!balance',
-	guildOnly: true,
-	cooldown: 3,
+	data: new SlashCommandBuilder()
+		.setName('balance')
+		.setDescription('Check your balance.'),
 
 	async execute(message, args, dbClient) {
 		

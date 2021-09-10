@@ -1,13 +1,11 @@
 const Discord = require("discord.js");
+const { SlashCommandBuilder } = require('@discordjs/builders');
+
 
 module.exports = {
-	name: 'poll',
-	aliases: ['survey'],
-	description: 'Produces a poll via discord embeds that allows voting by reacting',
-	args: true,
-	usage: '!poll ["title"] ["pollItem1"] ["pollItem2"] ... ["pollItem9"]',
-	guildOnly: true,
-	cooldown: 3,
+	data: new SlashCommandBuilder()
+		.setName('poll')
+		.setDescription('Create a new poll.'),
 
 	async execute(message, args) {
 		

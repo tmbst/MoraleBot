@@ -1,13 +1,11 @@
 const database = require('../../database/dbFunctions');
+const { SlashCommandBuilder } = require('@discordjs/builders');
+
 
 module.exports = {
-	name: 'restart',
-	aliases: ['reset'],
-	description: 'Perform restart services for the bot. Should only be called by *BOT* admins.',
-	args: false,
-	usage: '!restart',
-	guildOnly: true,
-	cooldown: 0,
+	data: new SlashCommandBuilder()
+		.setName('restart')
+		.setDescription('[ADMIN] Brings the Database up to date.'),
 
 	async execute(message, args, dbClient) {
         const membersList = [];

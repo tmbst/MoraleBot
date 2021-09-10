@@ -6,5 +6,8 @@
     "ownerID": 11111111111111111,
     "mongoURI": "ClusterConnectionURILinkGoesHere",
     "botChannelID": "11111111111111111",
-    "BoostedRoleID":"11111111111111111"
+    "boostedRoleID":"11111111111111111",
+    "clientId" : "11111111111111111",
+    "guildId" : "11111111111111111",
+    "freebieAmount" : 10
 }

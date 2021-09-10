@@ -1,14 +1,11 @@
 const fs = require('fs');
 const { connect } = require('http2');
+const { SlashCommandBuilder } = require('@discordjs/builders');
 
 module.exports = {
-    name: 'disconnect',
-    aliases: ['dc'],
-    description: 'Disconnect the bot from voice chat manually.',
-    args: false,
-    usage: '!disconnect - Disconnects the bot from voice chat.',
-    guildOnly: true,
-    cooldown: 1,
+	data: new SlashCommandBuilder()
+		.setName('disconnect')
+		.setDescription('Disconnect the bot from voice chat.'),
 
     async execute(message, args) {
 

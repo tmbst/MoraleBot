@@ -1,6 +1,11 @@
-const dbColName = 'guildMembers'
+const database = require('./dbClient');
 
 module.exports = {
+    // [Utility] Get a specific collection from MongoDB
+    getCollection(colName) {
+        const db = database.getMongoClient().db();
+        return db.collection(colName)
+    },
     // Create a guild member into the Database
     async createGuildMember(guildData, userData, dbClient)  {
         
@@ -62,14 +67,6 @@ module.exports = {
         return doc.guildMemberDailyClaimed
 
     },
-    // Read the balance of the guild member
-    async readBalance(guildID, userID, dbClient) {
-        const db = dbClient.db();
-        const col = db.collection(dbColName);
-        const doc = await col.findOne({"guildID": guildID, "guildMemberID": userID});
-
-        return doc.guildMemberBalance;
-    },
     // Update dailies claimed
     async updateDailiesClaimed(guildID, userID, currDateTime, dbClient) {
         const db = dbClient.db();
@@ -77,12 +74,18 @@ module.exports = {
 
         await col.updateOne({"guildID": guildID, "guildMemberID": userID}, {$set:{guildMemberDailyClaimed: currDateTime}});
     },
-    // Update the balance of the guild member
-    async updateBalance(guildID, userID, amount, dbClient) {
-        const db = dbClient.db();
-        const col = db.collection(dbColName);
+    // Read the balance of the guild member.
+    async readBalance(guildID, userID) {
+        const col = this.getCollection('guildMembers')
+        const doc = await col.findOne({"guildID": guildID, "guildMemberID": userID});
 
-        const currBalance = await this.readBalance(guildID, userID, dbClient);
+        return doc.guildMemberBalance;
+    },
+    // Update the balance of the guild member.
+    async updateBalance(guildID, userID, amount) {
+        const col = this.getCollection('guildMembers')
+
+        const currBalance = await this.readBalance(guildID, userID);
         const updatedBalance = currBalance + parseInt(amount);
 
         await col.updateOne({"guildID": guildID, "guildMemberID": userID}, {$set:{guildMemberBalance: updatedBalance}});

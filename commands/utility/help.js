@@ -1,13 +1,10 @@
 const { prefix } = require('../../config.json');
+const { SlashCommandBuilder } = require('@discordjs/builders');
 
 module.exports = {
-	name: 'help',
-    aliases: ['commands'],
-	description: 'List all of my commands or info about a specific command.',
-    args: false,
-	usage: '!help <commandName>',
-    guildOnly: false,
-	cooldown: 5,
+    data: new SlashCommandBuilder()
+    .setName('help')
+    .setDescription('Get help!'),
 
 	execute(message, args) {
 		const data = [];
