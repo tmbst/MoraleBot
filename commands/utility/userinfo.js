@@ -1,4 +1,4 @@
-const Discord = require("discord.js");
+const { MessageEmbed } = require('discord.js');
 const { DateTime } = require('luxon');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
@@ -39,7 +39,7 @@ module.exports = {
             guildMemberPremium = DateTime.fromJSDate(guildMember.premiumSince).toLocaleString(DateTime.DATE_MED);
         }
 
-        const userInfoEmbed = new Discord.MessageEmbed()
+        const userInfoEmbed = new MessageEmbed()
             .setColor(guildMemberColor)
             .setThumbnail(userAvatar)
             .setAuthor(userName + '#' + userDiscrim, userAvatar)
