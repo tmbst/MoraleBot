@@ -64,6 +64,6 @@ module.exports = {
 
 		const attachment = await createCanvas(interaction);
 
-		interaction.reply({files : [attachment]});
+		await interaction.reply({files : [attachment]});
 	},
 };

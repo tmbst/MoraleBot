@@ -7,10 +7,9 @@ module.exports = {
         return db.collection(colName)
     },
     // Create a guild member into the Database
-    async createGuildMember(guildData, userData, dbClient)  {
+    async createGuildMember(guildData, userData)  {
         
-        const db = dbClient.db();
-        const col = db.collection(dbColName);
+        const col = this.getCollection('guildMembers')
 
         let guildMemberDocument = {
             'guildID' : guildData.id,
@@ -24,10 +23,9 @@ module.exports = {
         await col.insertOne(guildMemberDocument);
     },
     // Delete a guild member from the Database
-    async deleteGuildMember(guildDataID, userDataID, dbClient) {
+    async deleteGuildMember(guildDataID, userDataID) {
 
-        const db = dbClient.db();
-        const col = db.collection(dbColName);
+        const col = this.getCollection('guildMembers')
         const doc = await col.findOne({"guildID": guildDataID, "guildMemberID": userDataID});
         const name = doc.guildMemberName;
 
@@ -35,26 +33,21 @@ module.exports = {
 
         return name;
     },
-    // Check for any guild members that joined while the bot was offline
-    async checkNewbieGuildMembers(discordGuildMembers, dbClient) {
+    // Check for any guild members that joined or retired while the bot was offline
+    async readMemberValidation(discordGuildMembers, request) {
         const mongoGuildMembers = [];
-        const db = dbClient.db();
-        const col = db.collection(dbColName);
+        const col = this.getCollection('guildMembers')
         const cursor = col.find({});
         await cursor.forEach(doc => mongoGuildMembers.push(doc.guildMemberID));
 
-        const difference = discordGuildMembers.filter(x => !mongoGuildMembers.includes(x));
+        let difference;
 
-        return difference;
-    },
-    async checkRetiredGuildMembers(discordGuildMembers, dbClient) {
-        const mongoGuildMembers = [];
-        const db = dbClient.db();
-        const col = db.collection(dbColName);
-        const cursor = col.find({});
-        await cursor.forEach(doc => mongoGuildMembers.push(doc.guildMemberID));
-
-        const difference = mongoGuildMembers.filter(x => !discordGuildMembers.includes(x));
+        if (request === 'retired') {
+            difference = mongoGuildMembers.filter(x => !discordGuildMembers.includes(x));
+        }
+        else if (request === 'new') {
+            difference = discordGuildMembers.filter(x => !mongoGuildMembers.includes(x));
+        }
 
         return difference;
     },

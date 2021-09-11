@@ -1,5 +1,6 @@
-const database = require('../../database/dbFunctions');
+const dbFunctions = require('../../database/dbFunctions');
 const { SlashCommandBuilder } = require('@discordjs/builders');
+const { ministryRoleId } = require('../../config.json'); 
 
 
 module.exports = {
@@ -7,10 +8,18 @@ module.exports = {
 		.setName('restart')
 		.setDescription('[ADMIN] Brings the Database up to date.'),
 
-	async execute(message, args, dbClient) {
+	async execute(interaction) {
+        
+        // Verify user executing this command is an admin.
+        if (!interaction.member.roles.cache.has(ministryRoleId)) {
+            interaction.reply(`You must be a part of the Ministry of Morale to use this command!`);
+            return;
+        }
+
         const membersList = [];
-        // Get Guild Members from Discord
-        await message.guild.members.fetch().then( guildMembers => {
+
+        // Get Guild Members from Discord Server.
+        await interaction.guild.members.fetch().then( guildMembers => {
             
             guildMembers.forEach( member =>
 
@@ -19,34 +28,34 @@ module.exports = {
             );
         });
 
-        // Get Guild Members to add from MongoDB
-        const addIdList = await database.checkNewbieGuildMembers(membersList, dbClient);
+        // Compare Guild Members to add from MongoDB.
+        const addIdList = await dbFunctions.readMemberValidation(membersList, 'new');
 
         if (addIdList.length == 0) {
-            message.reply(`No new members to add to the Database.`);
+            await interaction.reply(`No new members to add to the Database.`);
         }
         else {
             addIdList.forEach(async id => {
-                const guildMember = await message.guild.members.fetch(id);
+                const guildMember = await interaction.guild.members.fetch(id);
 
-                database.createGuildMember(message.guild, guildMember.user, dbClient);
+                dbFunctions.createGuildMember(interaction.guild, guildMember.user);
 
-                message.reply(`Added ${guildMember.user.username} to the Database.`);
+                await interaction.reply(`Added ${guildMember.user.username} to the Database.`);
             });
         }
 
-        // Get Guild Members to delete from MongoDB
-        const delIdList = await database.checkRetiredGuildMembers(membersList, dbClient);
+        // Compare Guild Members to delete from MongoDB.
+        const delIdList = await dbFunctions.readMemberValidation(membersList, 'retired');
 
         if (delIdList.length == 0) {
-            message.reply(`No new members to delete from the Database.`);
+            await interaction.followUp(`No new members to delete from the Database.`);
         }
         else {
             delIdList.forEach(async id => {
 
-                const deletedUser = await database.deleteGuildMember(message.guild.id, id, dbClient);
+                const deletedUser = await dbFunctions.deleteGuildMember(interaction.guild.id, id);
 
-                message.reply(`Removed ${deletedUser} from Database.`);
+                await interaction.followUp(`Removed ${deletedUser} from Database.`);
             });
         } 
 	},

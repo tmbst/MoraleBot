@@ -13,10 +13,10 @@ module.exports = {
 
         if (balance < freebieAmount) {
             await dbFunctions.updateBalance(interaction.guild.id, interaction.member.user.id, freebieAmount);
-            interaction.reply(`I have given you ${freebieAmount} Morale. Use it wisely.`);
+            await interaction.reply(`I have given you ${freebieAmount} Morale. Use it wisely.`);
         } 
         else {
-            interaction.reply(`You currently have enough Morale to survive...`);
+            await interaction.reply(`You currently have enough Morale to survive...`);
         }
         
 	},

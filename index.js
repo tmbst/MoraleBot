@@ -3,7 +3,7 @@ const { token } = require('./config.json');
 const database = require('./database/dbClient');
 const fs = require('fs');
 
-const client = new Client({intents: [Intents.FLAGS.GUILDS] });
+const client = new Client({intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS] });
 
 // Commands Handler
 client.commands = new Collection();
