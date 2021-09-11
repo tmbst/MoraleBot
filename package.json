@@ -21,10 +21,12 @@
     "@discordjs/builders": "^0.6.0",
     "@discordjs/opus": "^0.6.0",
     "@discordjs/rest": "^0.1.0-canary.0",
+    "@discordjs/voice": "^0.6.0",
     "canvas": "^2.8.0",
     "discord-api-types": "^0.23.1",
     "discord.js": "^13.1.0",
     "ffmpeg-static": "^4.4.0",
+    "libsodium-wrappers": "^0.7.9",
     "luxon": "^2.0.2",
     "mongodb": "^4.1.1"
   }
