@@ -2,6 +2,11 @@ const { MessageEmbed } = require('discord.js');
 const { DateTime } = require('luxon');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
+/*
+	Slash Command: Userinfo
+	Uses Database?: No
+	Description: This command pulls from the GuildMember and User classes and displays info in an embed.
+*/
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('userinfo')
@@ -53,7 +58,7 @@ module.exports = {
             .setTimestamp();
 
         // Send embed
-        await interaction.reply({embeds: [userInfoEmbed]});
+        return await interaction.reply({embeds: [userInfoEmbed]});
 
 	},
 };

@@ -3,6 +3,7 @@
     "prefix" : "!",
     "dailyAmount" : 500,
     "dailyReset" : 86400000,
+    "dailyMultiplier" : 1.5,
     "ownerID" : 11111111111111111,
     "mongoURI" : "ClusterConnectionURILinkGoesHere",
     "botChannelID" : "11111111111111111",

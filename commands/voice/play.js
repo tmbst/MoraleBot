@@ -3,7 +3,11 @@ const { join } = require('path');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { joinVoiceChannel, createAudioPlayer, createAudioResource } = require('@discordjs/voice');
 
-
+/*
+	Slash Command: Play
+	Uses Database?: No
+	Description: Plays audio files based on the options based in to the slash command.
+*/
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('play')
@@ -12,15 +16,16 @@ module.exports = {
 
     async execute(interaction) {
 
+        // Grab the voice channel and request from the User
         const channel = interaction.member.voice.channel
 
         if (!channel) {
-            await interaction.reply('You must be in a voice channel to use the play command.');
-            return;
+            return await interaction.reply('You must be in a voice channel to use the play command.');;
         }
 
         const playRequest = interaction.options.getString('input').toLowerCase();
 
+        // Determine the file path for the given request
         let filePath;
 
         switch (playRequest) {
@@ -53,10 +58,10 @@ module.exports = {
                 break;
 
             default:
-                await interaction.reply('Please use the input specified or check spelling!')
-                return;
+                return await interaction.reply('Please use the input specified or check spelling!');
         }
 
+        // DiscordJS Voice Connections and Audio Player Setup
         const connection = joinVoiceChannel({
             channelId: channel.id,
             guildId: channel.guild.id,
@@ -72,6 +77,6 @@ module.exports = {
 
         connection.subscribe(player);
         
-        await interaction.reply(`Now playing ${playRequest} audio.`);
+        return await interaction.reply(`Now playing ${playRequest} audio.`);
     }
 }

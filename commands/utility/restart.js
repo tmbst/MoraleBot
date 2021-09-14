@@ -2,21 +2,25 @@ const dbFunctions = require('../../database/dbFunctions');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { ministryRoleId } = require('../../config.json'); 
 
-
+/*
+	Slash Command: Restart
+	Uses Database?: Yes
+	Description: This command will check if any users need to be added to the DB or removed from the DB.
+*/
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('restart')
 		.setDescription('[ADMIN] Brings the Database up to date.'),
 
 	async execute(interaction) {
-        
+
         // Verify user executing this command is an admin.
         if (!interaction.member.roles.cache.has(ministryRoleId)) {
-            interaction.reply(`You must be a part of the Ministry of Morale to use this command!`);
-            return;
+            return interaction.reply('You must be a part of the Ministry of Morale to use this command!');
         }
 
         const membersList = [];
+        let message = '';
 
         // Get Guild Members from Discord Server.
         await interaction.guild.members.fetch().then( guildMembers => {
@@ -32,7 +36,7 @@ module.exports = {
         const addIdList = await dbFunctions.readMemberValidation(membersList, 'new');
 
         if (addIdList.length == 0) {
-            await interaction.reply(`No new members to add to the Database.`);
+            message += 'No new members to add to the Database.';
         }
         else {
             addIdList.forEach(async id => {
@@ -40,7 +44,7 @@ module.exports = {
 
                 dbFunctions.createGuildMember(interaction.guild, guildMember.user);
 
-                await interaction.reply(`Added ${guildMember.user.username} to the Database.`);
+                message += `Added ${guildMember.user.username} to the Database.`;
             });
         }
 
@@ -48,15 +52,16 @@ module.exports = {
         const delIdList = await dbFunctions.readMemberValidation(membersList, 'retired');
 
         if (delIdList.length == 0) {
-            await interaction.followUp(`No new members to delete from the Database.`);
+            message += '\nNo new members to delete from the Database.';
         }
         else {
             delIdList.forEach(async id => {
 
                 const deletedUser = await dbFunctions.deleteGuildMember(interaction.guild.id, id);
-
-                await interaction.followUp(`Removed ${deletedUser} from Database.`);
+                message += `\nRemoved ${deletedUser} from Database.`;
             });
-        } 
+        }
+
+        return await interaction.reply(message); 
 	},
 };

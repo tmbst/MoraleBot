@@ -1,7 +1,11 @@
 const { MessageEmbed } = require('discord.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
-
+/*
+	Slash Command: Poll
+	Uses Database?: No
+	Description: Creates a poll embed with reactions as the votes.
+*/
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('poll')
@@ -14,8 +18,7 @@ module.exports = {
         const match = interaction.options.getString('input').match(/".+?"/g);
 
         if (match == null) {
-            interaction.reply('Quotes are required for each item! Example "My Poll" "PollItem1" "PollItem2"');
-            return;
+            return await interaction.reply('Quotes are required for each item! Example "My Poll" "PollItem1" "PollItem2"');
         }
         
         // Construct the poll list and extract details
@@ -26,8 +29,7 @@ module.exports = {
         const choices = ['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣'];
 
         if (pollOptions.length > 9) {
-            interaction.reply('At this time you can only have 9 options.');
-            return;
+            return await interaction.reply('At this time you can only have 9 options.');
         }
         
         // Create the poll embed description (all of the poll options)
@@ -48,10 +50,11 @@ module.exports = {
 
         const pollEmbedRef = await interaction.channel.send({embeds: [pollEmbed]});
 
+        // Add reacts to the Poll Embed
         for (let i = 0; i < pollOptions.length; i++) {
             pollEmbedRef.react(choices[i]);
         }
 
-        await interaction.reply('Here is your poll!');
+        return await interaction.reply('Poll created.');
 	},
 };

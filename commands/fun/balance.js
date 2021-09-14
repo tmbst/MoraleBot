@@ -4,14 +4,23 @@ const Canvas = require('canvas');
 const { MessageAttachment } = require('discord.js');const path = require('path');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
+/*
+	Slash Command: Balance
+	Uses Database?: Yes
+	Description: Use this command to check a user's balance store in MongoDB.
+*/
 module.exports = {
+
 	data: new SlashCommandBuilder()
 		.setName('balance')
 		.setDescription('Check your balance.'),
 
 	async execute(interaction) {
 		
-		// Function for formatting canvas text on an image
+		/* 
+			Function: applyText
+			Description: Formats canvas text on an image
+		 */
 		const applyText = (canvas, text) => {
 			const ctx = canvas.getContext('2d');
 			let fontSize = 60;
@@ -24,35 +33,38 @@ module.exports = {
 			return ctx.font;
 		}
 
-		// Function for creating a new canvas image
+		/* 
+			Function: createCanvas
+			Description: Creates the Canvas image and sends it to the Discord Channel.
+		 */
 		const createCanvas = async (interaction) => {
 			
-			// Create new Canvas with dimensions of tmbst_wallet.png
+			// Create new Canvas with dimension size of tmbst_wallet.png
 			Canvas.registerFont('./assets/fonts/Futura Now Headline Bd.otf', {family: 'Futura'})
 
 			const canvas = Canvas.createCanvas(600,300);
 			const ctx = canvas.getContext('2d');
 
-			// Determine which background to use on the balance card
-
-			let background;
+			// Determine which background to load onto the Canvas
+			let source;
 
 			if (interaction.member.roles.cache.has(boostedRoleId)){
-				background = await Canvas.loadImage(path.resolve(__dirname, '../../assets/images/tmbst_wallet_nitro.png'));
+				source = path.resolve(__dirname, '../../assets/images/tmbst_wallet_nitro.png');
 			}
 			else {
-				background = await Canvas.loadImage(path.resolve(__dirname, '../../assets/images/tmbst_wallet_default.png'));
+				source = path.resolve(__dirname, '../../assets/images/tmbst_wallet_default.png');
 			}
 
-			// Canvas setup: Font size, Font, style, etc.
+			const background = await Canvas.loadImage(source);
+
+			// Canvas Styling: Font size, Font, style, etc.
 			ctx.drawImage(background, 0 , 0, canvas.width, canvas.height);
 			ctx.font = applyText(canvas, `${interaction.member.displayName}`);
 			ctx.fillStyle = '#ffffff'
 		
-			// Set the Display Name on the on the canvas
+			// Set the User's Display Name & Balance on the Canvas
 			ctx.fillText(`${interaction.member.displayName}`, 30, 285);
 
-			// Fetch & Set the balance on the canvas
 			const balance = await dbFunctions.readBalance(interaction.guild.id, interaction.member.user.id);
 			ctx.font = applyText(canvas, `${balance}`);
 			ctx.fillText(`${balance}`, 100, 170);
@@ -64,6 +76,6 @@ module.exports = {
 
 		const attachment = await createCanvas(interaction);
 
-		await interaction.reply({files : [attachment]});
+		return await interaction.reply({files : [attachment]});
 	},
 };

@@ -2,6 +2,11 @@ const dbFunctions = require('../../database/dbFunctions');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { freebieAmount } = require('../../config.json'); 
 
+/*
+	Slash Command: Freebie
+	Uses Database?: Yes
+	Description: If you are broke, you can get some Morale for free.
+*/
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('freebie')
@@ -9,15 +14,19 @@ module.exports = {
 
 	async execute(interaction) {
 
-		const balance = await dbFunctions.readBalance(interaction.guild.id, interaction.member.user.id);
+        const guildId = interaction.guild.id
+        const userId = interaction.member.user.id
+		const balance = await dbFunctions.readBalance(guildId, userId);
+        let message = ''
 
         if (balance < freebieAmount) {
-            await dbFunctions.updateBalance(interaction.guild.id, interaction.member.user.id, freebieAmount);
-            await interaction.reply(`I have given you ${freebieAmount} Morale. Use it wisely.`);
+            await dbFunctions.updateBalance(guildId, userId, freebieAmount);
+            message += `Broke again? A Bank of Morale banker slides you ${freebieAmount} Morale!`
         } 
         else {
-            await interaction.reply(`You currently have enough Morale to survive...`);
+            message += `Your balance is ${balance}. You have enough Morale to survive.`;
         }
-        
+
+        return await interaction.reply(message);
 	},
 };
