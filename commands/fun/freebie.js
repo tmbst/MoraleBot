@@ -8,6 +8,8 @@ const { freebieAmount } = require('../../config.json');
 	Description: If you are broke, you can get some Morale for free.
 */
 module.exports = {
+    cooldown : 3,
+    
 	data: new SlashCommandBuilder()
 		.setName('freebie')
 		.setDescription('Snag some spare change.'),

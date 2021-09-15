@@ -7,6 +7,8 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 	Description: Creates a poll embed with reactions as the votes.
 */
 module.exports = {
+    cooldown : 3,
+    
 	data: new SlashCommandBuilder()
 		.setName('poll')
 		.setDescription('Create a new poll.')

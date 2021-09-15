@@ -8,6 +8,8 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 	Description: This command pulls from the GuildMember and User classes and displays info in an embed.
 */
 module.exports = {
+    cooldown : 3,
+    
     data: new SlashCommandBuilder()
         .setName('userinfo')
         .setDescription('Get user information')

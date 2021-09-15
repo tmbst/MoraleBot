@@ -10,7 +10,8 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 	Description: Use this command to check a user's balance store in MongoDB.
 */
 module.exports = {
-
+	cooldown : 3,
+	
 	data: new SlashCommandBuilder()
 		.setName('balance')
 		.setDescription('Check your balance.'),

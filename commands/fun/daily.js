@@ -10,6 +10,8 @@ const { MessageEmbed, MessageAttachment} = require('discord.js');
 	Description: Use this command to collect daily Morale and update the User's balance.
 */
 module.exports = {
+	cooldown : 3,
+	
 	data: new SlashCommandBuilder()
 		.setName('daily')
 		.setDescription('Obtain your dailies.'),

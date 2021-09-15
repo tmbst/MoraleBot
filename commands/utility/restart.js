@@ -8,6 +8,8 @@ const { ministryRoleId } = require('../../config.json');
 	Description: This command will check if any users need to be added to the DB or removed from the DB.
 */
 module.exports = {
+    cooldown : 3,
+    
 	data: new SlashCommandBuilder()
 		.setName('restart')
 		.setDescription('[ADMIN] Brings the Database up to date.'),
