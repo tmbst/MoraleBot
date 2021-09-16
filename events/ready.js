@@ -1,3 +1,9 @@
+/*
+	Event: ready
+	Uses Database?: No
+	Description: Emitted when the client becomes ready to start working.
+*/
+
 module.exports = {
     name: 'ready',
     once: true,

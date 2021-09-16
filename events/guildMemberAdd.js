@@ -1,12 +1,18 @@
-const database = require('../database/dbFunctions');
+const dbFunctions = require('../database/dbFunctions');
 const Discord = require('discord.js');
 const { DateTime } = require('luxon');
-const { botChannelID } = require('../config.json');
+const { generalChannelId } = require('../config.json');
+
+/*
+	Event: guildMemberAdd
+	Uses Database?: Yes
+	Description: Emitted whenever a user joins a guild.
+*/
 
 module.exports = {
     name: 'guildMemberAdd',
 
-    execute(member, client, dbClient) {
+    execute(member) {
 
         const userJoinedDate = DateTime.fromJSDate(member.user.createdAt)
         const userAccountAge = DateTime.now().diff(userJoinedDate,['years','months','days']).toObject();
@@ -19,11 +25,11 @@ module.exports = {
                 .addField('Account Age',`${userAccountAge.years} years, ${userAccountAge.months} months, ${Math.floor(userAccountAge.days)} days`)
                 .setTimestamp();
 
-        const channel = member.guild.channels.cache.get(botChannelID);
+        const channel = member.guild.channels.cache.get(generalChannelId);
 
-        channel.send(welcomeEmbed);
+        channel.send({embeds: [welcomeEmbed]});
 
         // DB Add New User
-        database.createGuildMember(member.guild, member.user, dbClient);
+        dbFunctions.createGuildMember(member.guild, member.user);
     },
 }

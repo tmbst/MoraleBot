@@ -1,24 +1,30 @@
-const database = require('../database/dbFunctions');
+const dbFunctions = require('../database/dbFunctions');
 const Discord = require('discord.js');
-const { botChannelID } = require('../config.json');
+const { generalChannelId } = require('../config.json');
+
+/*
+	Event: guildMemberRemove
+	Uses Database?: Yes
+	Description: Emitted whenever a member leaves a guild, or is kicked.
+*/
 
 module.exports = {
     name: 'guildMemberRemove',
 
-    execute(member, client, dbClient) {
+    execute(member) {
 
         const leavingEmbed = new Discord.MessageEmbed()
                 .setColor('FF0000')
                 .setAuthor(member.user.username + '#' + member.user.discriminator, member.user.displayAvatarURL())
-                .setTitle('Member Left')
-                .setDescription('They are no longer a member of Team Morale Boost.')
+                .setTitle('A member has left the server.')
+                .setDescription(`${member.user.username} is no longer a member of Team Morale Boost.`)
                 .setTimestamp();
 
-        const channel = member.guild.channels.cache.get(botChannelID);
+        const channel = member.guild.channels.cache.get(generalChannelId);
 
-        channel.send(leavingEmbed);
+        channel.send({embeds: [leavingEmbed]});
 
         // DB delete user
-        database.deleteGuildMember(member.guild.id, member.user.id, dbClient);
+        dbFunctions.deleteGuildMember(member.guild.id, member.user.id);
     },
 }

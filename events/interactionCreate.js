@@ -1,6 +1,12 @@
 const { Collection } = require('discord.js');
 const cooldowns = new Collection();
 
+/*
+	Event: interactionCreate
+	Uses Database?: No
+	Description: Emitted when an interaction is created.
+*/
+
 module.exports = {
 	name: 'interactionCreate',
 
