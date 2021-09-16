@@ -6,6 +6,13 @@ module.exports = {
         const db = database.getMongoClient().db();
         return db.collection(colName)
     },
+    // [Read] Finds any guild id in the database if it exists.
+    async readGuildId(guildID) {
+        const col = this.getCollection('guildMembers')
+        const doc = await col.findOne({"guildID": guildID});
+
+        return doc ? doc.guildID : null
+    },
     // Create a guild member into the Database
     async createGuildMember(guildData, userData)  {
         

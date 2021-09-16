@@ -1,16 +1,17 @@
 {
     "token" : "DiscordBotTokenGoesHere",
+    "mongoURI" : "ClusterConnectionURILinkGoesHere",
     "prefix" : "!",
+    "freebieAmount" : 10,
     "dailyAmount" : 500,
     "dailyReset" : 86400000,
     "dailyMultiplier" : 1.5,
-    "ownerID" : 11111111111111111,
-    "mongoURI" : "ClusterConnectionURILinkGoesHere",
+    "ownerId" : "11111111111111111",
     "botChannelId" : "11111111111111111",
     "generalChannelId" : "11111111111111111",
     "boostedRoleId" :"11111111111111111",
     "ministryRoleId" : "11111111111111111",
+    "lurkerRoleId" : "11111111111111111",
     "clientId" : "11111111111111111",
-    "guildId" : "11111111111111111",
-    "freebieAmount" : 10
+    "guildId" : "11111111111111111"
 }

@@ -27,11 +27,14 @@ module.exports = {
         // Get Guild Members from Discord Server.
         await interaction.guild.members.fetch().then( guildMembers => {
             
-            guildMembers.forEach( member =>
+            guildMembers.forEach( (member) => {
 
-                membersList.push(member.user.id)
-                
-            );
+                // Do not add bots to the list.
+                if (!member.user.bot) {
+                    membersList.push(member.user.id)
+                }
+
+            });
         });
 
         // Compare Guild Members to add from MongoDB.
@@ -41,13 +44,28 @@ module.exports = {
             message += 'No new members to add to the Database.';
         }
         else {
-            addIdList.forEach(async id => {
+
+            for (const id of addIdList) {
                 const guildMember = await interaction.guild.members.fetch(id);
+                
+                // No bots allowed
+                if (!guildMember.user.bot) {
+                    dbFunctions.createGuildMember(interaction.guild, guildMember.user);
 
-                dbFunctions.createGuildMember(interaction.guild, guildMember.user);
+                    message += `\nAdded ${guildMember.user.username} to the Database.`;
+                }
+            }
 
-                message += `Added ${guildMember.user.username} to the Database.`;
-            });
+            // addIdList.forEach(async id => {
+            //     const guildMember = await interaction.guild.members.fetch(id);
+                
+            //     // No bots allowed
+            //     if (!guildMember.user.bot) {
+            //         dbFunctions.createGuildMember(interaction.guild, guildMember.user);
+
+            //         message += `\nAdded ${guildMember.user.username} to the Database.`;
+            //     }
+            // });
         }
 
         // Compare Guild Members to delete from MongoDB.
@@ -57,11 +75,20 @@ module.exports = {
             message += '\nNo new members to delete from the Database.';
         }
         else {
-            delIdList.forEach(async id => {
+
+            for (const id of delIdList) {
 
                 const deletedUser = await dbFunctions.deleteGuildMember(interaction.guild.id, id);
                 message += `\nRemoved ${deletedUser} from Database.`;
-            });
+
+            }
+
+            // delIdList.forEach(async id => {
+
+            //     const deletedUser = await dbFunctions.deleteGuildMember(interaction.guild.id, id);
+            //     message += `\nRemoved ${deletedUser} from Database.`;
+
+            // });
         }
 
         return await interaction.reply(message); 

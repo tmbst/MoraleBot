@@ -13,6 +13,11 @@ module.exports = {
 
     execute(member) {
 
+        // Ignore bots.
+        if (member.user.bot) {
+            return;
+        }
+
         const leavingEmbed = new Discord.MessageEmbed()
                 .setColor('FF0000')
                 .setAuthor(member.user.username + '#' + member.user.discriminator, member.user.displayAvatarURL())
