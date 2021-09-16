@@ -1,7 +1,7 @@
 const fs = require('fs');
 const { join } = require('path');
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { joinVoiceChannel, createAudioPlayer, createAudioResource } = require('@discordjs/voice');
+const { getVoiceConnection, joinVoiceChannel, createAudioPlayer, createAudioResource } = require('@discordjs/voice');
 
 /*
 	Slash Command: Play
@@ -61,22 +61,29 @@ module.exports = {
                 return await interaction.reply('Please use the input specified or check spelling!');
         }
 
-        // DiscordJS Voice Connections and Audio Player Setup
-        const connection = joinVoiceChannel({
-            channelId: channel.id,
-            guildId: channel.guild.id,
-            adapterCreator: channel.guild.voiceAdapterCreator,
-        });
+        // Get the bot voice connection and destroy it
+        let connection = getVoiceConnection(interaction.guild.id);
+
+        if (!connection) {
+            // DiscordJS Voice Connections and Audio Player Setup
+            connection = joinVoiceChannel({
+                channelId: channel.id,
+                guildId: channel.guild.id,
+                adapterCreator: channel.guild.voiceAdapterCreator,
+            });
+
+            await interaction.channel.send('Connected to a voice channel.');
+        }
+        
+        const player = createAudioPlayer();
 
         let resource = createAudioResource(join(__dirname, `${filePath}`), { inlineVolume: true });
         resource.volume.setVolume(0.5);
 
-        const player = createAudioPlayer();
+        connection.subscribe(player);
 
         player.play(resource);
 
-        connection.subscribe(player);
-        
         return await interaction.reply(`Now playing ${playRequest} audio.`);
     }
 }
