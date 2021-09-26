@@ -1,76 +1,100 @@
-const fs = require('fs');
-const { connect } = require('http2');
+const fs = require("fs");
+const { join } = require("path");
+const { SlashCommandBuilder } = require("@discordjs/builders");
+const { getVoiceConnection, joinVoiceChannel, createAudioPlayer, createAudioResource } = require("@discordjs/voice");
+
+/*
+	Slash Command: Play
+	Uses Database?: No
+	Description: Plays audio files based on the options based in to the slash command.
+*/
 
 module.exports = {
-    name: 'play',
-    aliases: ['vc'],
-    description: 'Connect bot to voice chat and play request',
-    args: true,
-    usage: '!play [input], where input can be any of the following: david, goddammit, pepperoncini, bonk, joey',
-    guildOnly: true,
-    cooldown: 1,
+	data: new SlashCommandBuilder()
+		.setName("play")
+		.setDescription("Play audio files.")
+		.addStringOption((option) =>
+			option
+				.setName("input")
+				.setDescription("Choices: david, joey, goddammit, pepperoncini, or bonk")
+				.setRequired(true)
+		),
 
-    async execute(message, args) {
+	async execute(interaction) {
+		// Grab the voice channel and request from the User
+		const channel = interaction.member.voice.channel;
 
-        if (!message.member.voice.channel) {
-            message.reply('You must be in a voice channel to use the play command!');
-            return;
-        }
+		if (!channel) {
+			return await interaction.reply(
+				"You must be in a voice channel to use the play command."
+			);
+		}
 
-        const playRequest = args[0].toLowerCase();
-        const connection = await message.member.voice.channel.join();
-        let filePath;
+		const playRequest = interaction.options
+			.getString("input")
+			.toLowerCase();
 
-        switch (playRequest) {
-            case 'david':
-                const files = fs.readdirSync('./assets/sounds/david/');
-                const randomDavidSound = files[Math.floor(Math.random() * files.length)];
+		// Determine the file path for the given request
+		let filePath;
 
-                filePath = `../../assets/sounds/david/${randomDavidSound}`;
+		switch (playRequest) {
+			case "david":
+				const files = fs.readdirSync("./assets/sounds/david/");
+				const randomDavidSound = files[Math.floor(Math.random() * files.length)];
 
-                break;
+				filePath = `../../assets/sounds/david/${randomDavidSound}`;
 
-            case 'joey':
-                filePath = `../../assets/sounds/david/joey.wav`;
+				break;
 
-                break;
+			case "joey":
+				filePath = `../../assets/sounds/david/joey.wav`;
 
-            case 'goddammit':
-                filePath = `../../assets/sounds/david/godDammit.wav`;
+				break;
 
-                break;
+			case "goddammit":
+				filePath = `../../assets/sounds/david/godDammit.wav`;
 
-            case 'pepperoncini':
-                filePath = `../../assets/sounds/general/pepperoncini.mp3`;
+				break;
 
-                break;
+			case "pepperoncini":
+				filePath = `../../assets/sounds/general/pepperoncini.mp3`;
 
-            case 'bonk':
-                filePath = `../../assets/sounds/general/bonkSound.mp3`;
+				break;
 
-                break;
+			case "bonk":
+				filePath = `../../assets/sounds/general/bonkSound.mp3`;
 
-            default:
-                filePath = `../../assets/sounds/general/bonkSound.mp3`;
-                message.reply('Bonk! Please use the input specified in the usage or check spelling!')
+				break;
 
-                break;
-        }
+			default:
+				return await interaction.reply("Please use the input specified or check spelling!");
+		}
 
+		// Get the bot voice connection and destroy it
+		let connection = getVoiceConnection(interaction.guild.id);
 
-        dispatcher = connection.play(require("path").join(__dirname, `${filePath}`), {volume: 0.75});
+		if (!connection) {
+			// DiscordJS Voice Connections and Audio Player Setup
+			connection = joinVoiceChannel({
+				channelId: channel.id,
+				guildId: channel.guild.id,
+				adapterCreator: channel.guild.voiceAdapterCreator,
+			});
 
-        dispatcher.on('start', () => {
-            console.log(`LOGS: ${filePath} has started playing.`);
+			await interaction.channel.send("Connected to a voice channel.");
+		}
 
-        });
+		const player = createAudioPlayer();
 
-        dispatcher.on('finish', () => {
-            console.log(`LOGS: ${filePath} has finished playing.`);
+		let resource = createAudioResource(join(__dirname, `${filePath}`), {
+			inlineVolume: true,
+		});
+		resource.volume.setVolume(0.5);
 
-        });
-        
-        dispatcher.on(`ERROR: ${filePath} has errored.`, console.error);
+		connection.subscribe(player);
 
-    }
-}
+		player.play(resource);
+
+		return await interaction.reply(`Now playing ${playRequest} audio.`);
+	},
+};

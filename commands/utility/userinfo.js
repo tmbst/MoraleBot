@@ -1,45 +1,88 @@
-const Discord = require("discord.js");
-const { DateTime } = require('luxon');
+const { MessageEmbed } = require("discord.js");
+const { DateTime } = require("luxon");
+const { SlashCommandBuilder } = require("@discordjs/builders");
+
+/*
+	Slash Command: Userinfo
+	Uses Database?: No
+	Description: This command pulls from the GuildMember and User classes and displays info in an embed.
+*/
 
 module.exports = {
-	name: 'userinfo',
-	aliases: ['user'],
-	description: 'Brings up some details about a specific user or yourself.',
-	args: false,
-	usage: '!userinfo, !userinfo [@user]',
-	guildOnly: true,
 	cooldown: 3,
 
-    async execute(message, args) {
+	data: new SlashCommandBuilder()
+		.setName("userinfo")
+		.setDescription("Get user information")
+		.addUserOption((option) =>
+			option.setName("user").setDescription("Specify a user.")
+		),
 
-        let user;
+	async execute(interaction) {
+		let guildMember;
+		let user = interaction.options.getUser("user");
 
-        if (message.mentions.users.first()) {
-            user = message.mentions.users.first();
-        }
-        else {
-            user = message.author;
-        }
+		// Extract optional mentionable if it exists, otherwise get the user who called the interaction
+		if (user != null) {
+			guildMember = await interaction.guild.members.fetch(user);
+		} else {
+			user = interaction.user;
+			guildMember = interaction.member;
+		}
 
-        const member = message.guild.member(user);
+		// Extract various data from the User and GuildMember Classes and place into embed
+		const userRegistered = DateTime.fromJSDate(user.createdAt).toLocaleString(DateTime.DATE_MED);
+		const userName = user.username;
+		const userDiscrim = user.discriminator;
+		const userAvatar = user.displayAvatarURL();
 
-		const joinDate = DateTime.fromJSDate(member.joinedAt).toLocaleString(DateTime.DATE_MED);
-        const registeredDate = DateTime.fromJSDate(user.createdAt).toLocaleString(DateTime.DATE_MED);
-       
-        const userInfoEmbed = new Discord.MessageEmbed()
-            .setColor('RANDOM')
-            .setThumbnail(user.displayAvatarURL())
-            .setAuthor(user.username + '#' + user.discriminator, user.displayAvatarURL())
-            .addField('Nickname', member.nickname ? member.nickname : 'No Nickname')
-            .addFields(
-                {name: 'Registered Date', value: registeredDate, inline: true},
-                {name: 'Joined Date', value: joinDate, inline: true},
-            )
-            .addField('Status', member.presence.status)
-            .addField(`Roles [${member.roles.cache.size-1}]`, member.roles.cache.map(r => r).slice(0,-1).join(' | '))
-            .setTimestamp();
+		const guildMemberJoined = DateTime.fromJSDate(guildMember.joinedAt).toLocaleString(DateTime.DATE_MED);
+		const guildMemberNickname = guildMember.nickname;
+		const guildMemberColor = guildMember.displayColor;
+		const guildMemberRolesSize = guildMember.roles.cache.size - 1;
+		const guildMemberRolesText = guildMember.roles.cache
+			.map((r) => r)
+			.slice(0, -1)
+			.join(" | ");
 
-        await message.channel.send(userInfoEmbed);
+		let guildMemberPremium;
 
+		if (guildMember.premiumSince) {
+			guildMemberPremium = DateTime.fromJSDate(guildMember.premiumSince).toLocaleString(DateTime.DATE_MED);
+		}
+
+		const userInfoEmbed = new MessageEmbed()
+			.setColor(guildMemberColor)
+			.setThumbnail(userAvatar)
+			.setAuthor(userName + "#" + userDiscrim, userAvatar)
+			.addField(
+				"Nickname",
+				guildMemberNickname ? guildMemberNickname : "No Nickname set."
+			)
+			.addFields(
+				{
+					name: "Registered Date",
+					value: userRegistered,
+					inline: true,
+				},
+				{
+					name: "Joined Server Date",
+					value: guildMemberJoined,
+					inline: true,
+				},
+				{
+					name: "Booster Date",
+					value: guildMemberPremium ? guildMemberPremium : "N/A",
+					inline: true,
+				}
+			)
+			.addField(
+				`Roles [${guildMemberRolesSize}]`,
+				guildMemberRolesText ? guildMemberRolesText : "No roles assigned."
+			)
+			.setTimestamp();
+
+		// Send embed
+		return await interaction.reply({ embeds: [userInfoEmbed] });
 	},
 };

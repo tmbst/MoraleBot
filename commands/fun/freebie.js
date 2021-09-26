@@ -1,25 +1,34 @@
-const database = require('../../database/dbFunctions');
+const dbFunctions = require("../../database/dbFunctions");
+const { SlashCommandBuilder } = require("@discordjs/builders");
+const { freebieAmount } = require("../../config.json");
+
+/*
+	Slash Command: Freebie
+	Uses Database?: Yes
+	Description: If you are broke, you can get some Morale for free.
+*/
 
 module.exports = {
-	name: 'freebie',
-	aliases: ['broke', 'poor', 'needmoneypls'],
-	description: 'freebie!',
-	args: false,
-	usage: '!freebie',
-	guildOnly: true,
 	cooldown: 3,
 
-	async execute(message, args, dbClient) {
+	data: new SlashCommandBuilder()
+		.setName("freebie")
+		.setDescription("Snag some spare change."),
 
-		const balance = await database.readBalance(message.guild.id, message.member.user.id, dbClient);
-        const freebieAmount = 10;
+	async execute(interaction) {
 
-        if (balance == 0) {
-            await database.updateBalance(message.guild.id, message.member.user.id, freebieAmount, dbClient);
-            message.reply(`I have given you ${freebieAmount} Morale. Use it wisely.`);
-        } 
-        else {
-            message.reply(`You currently have enough Morale to survive...`);
-        }
+		const guildId = interaction.guild.id;
+		const userId = interaction.member.user.id;
+		const balance = await dbFunctions.readBalance(guildId, userId);
+		let message = "";
+
+		if (balance < freebieAmount) {
+			await dbFunctions.updateBalance(guildId, userId, freebieAmount);
+			message += `Broke again? A Bank of Morale banker slides you ${freebieAmount} Morale!`;
+		} else {
+			message += `Your balance is ${balance}. You have enough Morale to survive.`;
+		}
+
+		return await interaction.reply(message);
 	},
 };

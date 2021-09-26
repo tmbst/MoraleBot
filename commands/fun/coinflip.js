@@ -1,74 +1,146 @@
-const Discord = require("discord.js");
-const database = require('../../database/dbFunctions');
+const { MessageActionRow, MessageButton } = require("discord.js");
+const dbFunctions = require("../../database/dbFunctions");
+const { SlashCommandBuilder } = require("@discordjs/builders");
+
+/*
+	Slash Command: Coinflip
+	Uses Database?: Yes
+	Description: Flip a coin! Optional bet arguments.
+*/
 
 module.exports = {
-	name: 'coinflip',
-	aliases: ['coin', 'flip'],
-	description: 'Heads or Tails...',
-	args: false,
-	usage: '!coinflip, !coinflip [bet]',
-	guildOnly: true,
 	cooldown: 8,
 
-	async execute(message, args, dbClient) {
+	data: new SlashCommandBuilder()
+		.setName("coinflip")
+		.setDescription("Flip a coin!")
+		.addIntegerOption((option) =>
+			option.setName("int").setDescription("Enter a bet.")
+		),
 
-        const num = Math.floor(Math.random() * 2);
-        const map = {0:'heads',1:'tails'};
-        const regex = new RegExp(/^\d+$/);
+	async execute(interaction) {
+		const bet = interaction.options.getInteger("int");
+		const idx = Math.floor(Math.random() * 2);
+		const choices = ["Heads", "Tails"];
+		const result = choices[idx];
+		const regex = new RegExp(/^\d+$/);
 
-        let heads = false;
-        let tails = false;
-        let bet = 0;
+		// User passes a valid bet as an argument, allow them to gamble their moralies
+		if (bet) {
+			if (!regex.test(bet)) {
+				return await interaction.reply(
+					"Invalid bet. Please try again!"
+				);
+			}
 
-        // User passes a valid bet as an argument, allow them to gamble their moralies
-        if (args.length > 0 && regex.test(args[0])){
-            bet = args[0];
-            const balance = await database.readBalance(message.guild.id, message.member.user.id, dbClient);
-            if (bet > balance) {
-                message.reply("Your current balance is to low for this bet!");
-                return;
-            }
-        }
+			const balance = await dbFunctions.readBalance(
+				interaction.guild.id,
+				interaction.member.user.id
+			);
 
-        const botMessage = await message.channel.send("Heads (H) or Tails (T)? React below...");
-        botMessage.react('🇭').then(() => botMessage.react('🇹'));
+			if (bet > balance) {
+				return await interaction.reply(
+					"Your current balance is to low for this bet!"
+				);
+			}
+		}
 
-        const filter = (reaction, user) => {
-            return ['🇭','🇹'].includes(reaction.emoji.name) && user.id === message.author.id;
-        };
+		// Button setup
+		const buttonHeads = new MessageButton()
+			.setCustomId("Heads")
+			.setLabel("Heads")
+			.setStyle("SECONDARY");
 
-        // Wait for the user to react with H or T
-        botMessage.awaitReactions(filter, {max: 1, time: 8000, errors: ['time'] })
-            .then(async collected => {
-                const reaction = collected.first();
+		const buttonTails = new MessageButton()
+			.setCustomId("Tails")
+			.setLabel("Tails")
+			.setStyle("SECONDARY");
 
-                if (reaction.emoji.name === '🇭') {
-                    heads = true;
-                    message.channel.send('You picked Heads...');
-            
-                }
-                else {
-                    tails = true;
-                    message.channel.send('You picked Tails...');
-                }
-                // Determine winnings or losings
-                if ((num == 0 && heads) || (num == 1 && tails)) {
-                    message.reply(`You won!!! The flip was ${map[num]}!!`);
-                    if (bet != 0) {
-                        message.channel.send(`You won ${bet} Morale!`);
-                        await database.updateBalance(message.guild.id, message.member.user.id, bet, dbClient);
-                    }
-                }
-                else {
-                    message.reply(`You lost. The flip was ${map[num]}.`);
-                    if (bet != 0) {
-                        message.channel.send(`You lost ${bet} Morale.`)
-                        await database.updateBalance(message.guild.id, message.member.user.id, -bet, dbClient);
-                    }
-                }
+		const row = new MessageActionRow().addComponents([
+			buttonHeads,
+			buttonTails,
+		]);
 
-            }).catch(collected => {
-                message.reply('You failed to react with Heads or Tails.');
-            });
+		await interaction.reply({
+			content: "Heads or Tails?",
+			components: [row],
+		});
+
+		// Spawns a collector to collect respones from the buttons, user has 8 seconds to click the buttons.
+		const collector = interaction.channel.createMessageComponentCollector({
+			componentType: "BUTTON",
+			time: 8000,
+		});
+
+		let choice;
+
+		collector.on("collect", async (buttonInteraction) => {
+			if (buttonInteraction.user.id === interaction.user.id) {
+				choice = buttonInteraction.customId;
+
+				// Set colors and disable all buttons
+				row.components.forEach((component) => {
+					if (component.customId === choice && choice === result) {
+						component.setStyle("SUCCESS");
+					}
+
+					if (component.customId === choice && choice !== result) {
+						component.setStyle("DANGER");
+					}
+					component.setDisabled(true);
+				});
+
+				// Game Logic: Determine if the user's choice matches the result
+				// Also handle any bets that were placed at the time of playing the game. Deduct/Add to user's balance.
+				let message = "";
+				const guildId = interaction.guild.id;
+				const userId = interaction.member.user.id;
+
+				message += `You picked: ${choice}`;
+
+				if (choice === result) {
+					message += `\nYou won!!! The flip was ${result}.`;
+					if (bet) {
+						message += `\n${bet} Morale has been added to your account!`;
+						await dbFunctions.updateBalance(guildId, userId, bet);
+					}
+				} else {
+					message += `\nYou lost. The flip was ${result}.`;
+					if (bet) {
+						message += `\n${bet} Morale has been deducted from your account.`;
+						await dbFunctions.updateBalance(guildId, userId, -bet);
+					}
+				}
+
+				await buttonInteraction.reply({
+					content: message,
+					components: [row],
+				});
+
+				collector.stop();
+			}
+			// Another user attempted to click on the buttons.
+			else {
+				await buttonInteraction.reply({
+					content: `These buttons aren't for you!`,
+					ephemeral: true,
+				});
+			}
+		});
+
+		// Collector End Event -> Close out the main interaction.
+		collector.on("end", async (collected) => {
+			if (!choice) {
+				return await interaction.editReply({
+					content: "Please click on the Heads or Tails buttons.",
+					components: [],
+				});
+			}
+
+			return await interaction.editReply({
+				content: "This coinflip session has completed.",
+				components: [],
+			});
+		});
 	},
 };

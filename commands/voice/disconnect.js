@@ -1,39 +1,34 @@
-const fs = require('fs');
-const { connect } = require('http2');
+const fs = require("fs");
+const { SlashCommandBuilder } = require("@discordjs/builders");
+const { getVoiceConnection } = require("@discordjs/voice");
+
+/*
+	Slash Command: Disconnect
+	Uses Database?: No
+	Description: Disconnects the bot from a connected voice channel.
+*/
 
 module.exports = {
-    name: 'disconnect',
-    aliases: ['dc'],
-    description: 'Disconnect the bot from voice chat manually.',
-    args: false,
-    usage: '!disconnect - Disconnects the bot from voice chat.',
-    guildOnly: true,
-    cooldown: 1,
+	data: new SlashCommandBuilder()
+		.setName("disconnect")
+		.setDescription("Disconnect the bot from voice chat."),
 
-    async execute(message, args) {
+	async execute(interaction) {
+		const userVoiceChannel = interaction.member.voice.channel;
 
-        const userVoiceChannel = message.member.voice.channel;
+		// Check if user is connected to a voice channel
+		if (!userVoiceChannel) {
+			return await interaction.reply("You must be in a voice channel to use the disconnect command.");
+		}
 
-        if (!userVoiceChannel) {
-            message.reply('You must be in a voice channel to use the disconnect command.');
-            return;
-        }
+		// Get the bot voice connection and destroy it
+		const connection = getVoiceConnection(interaction.guild.id);
 
-        const botVoiceConnection = message.guild.voice;
+		if (!connection) {
+			return await interaction.reply("The bot must be connected to a voice channel before using the disconnect command.");
+		}
 
-        if (!botVoiceConnection) {
-            message.reply('The bot must be connected to a voice channel before using the disconnect command.')
-            return;
-        }
-
-        const botVoiceChannel = botVoiceConnection.channel;
-
-        if (userVoiceChannel === botVoiceChannel) {
-            botVoiceChannel.leave();
-            message.reply('MoraleBot has been disconnected from the voice channel.')
-        }
-        else {
-            message.reply('MoraleBot is not in the same voice channel as you.')
-        }
-    }
-}
+		connection.destroy();
+		return await interaction.reply("MoraleBot has been disconnected from the voice channel.");
+	},
+};
