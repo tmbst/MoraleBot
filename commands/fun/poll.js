@@ -25,7 +25,7 @@ module.exports = {
 		const match = interaction.options.getString("input").match(/".+?"/g);
 
 		if (match == null) {
-			return await interaction.reply('Quotes are required for each item! Example "My Poll" "PollItem1" "PollItem2"');
+			return await interaction.reply('Quotes are required for each item! Example "Poll Title" "PollItem1" "PollItem2" ... "PollItem9"');
 		}
 
 		// Construct the poll list and extract details

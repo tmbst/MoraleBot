@@ -132,7 +132,7 @@ module.exports = {
 		collector.on("end", async (collected) => {
 			if (!choice) {
 				return await interaction.editReply({
-					content: "Plase click on the Heads or Tails buttons.",
+					content: "Please click on the Heads or Tails buttons.",
 					components: [],
 				});
 			}

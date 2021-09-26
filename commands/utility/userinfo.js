@@ -78,9 +78,7 @@ module.exports = {
 			)
 			.addField(
 				`Roles [${guildMemberRolesSize}]`,
-				guildMemberRolesText
-					? guildMemberRolesText
-					: "No roles assigned."
+				guildMemberRolesText ? guildMemberRolesText : "No roles assigned."
 			)
 			.setTimestamp();
 
