@@ -28,6 +28,6 @@
     "ffmpeg-static": "^4.4.0",
     "libsodium-wrappers": "^0.7.9",
     "luxon": "^2.0.2",
-    "mongodb": "^4.1.1"
+    "mongodb": "^4.1.2"
   }
 }
