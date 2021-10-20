@@ -9,23 +9,23 @@ const { SlashCommandBuilder } = require("@discordjs/builders");
 */
 
 module.exports = {
-	cooldown: 8,
+	cooldown: 2,
 
 	data: new SlashCommandBuilder()
 		.setName("coinflip")
-		.setDescription("Flip a coin!")
+		.setDescription("Flip a coin! Optionally, bet some Morale.")
 		.addIntegerOption((option) =>
-			option.setName("int").setDescription("Enter a bet.")
+			option.setName("int").setDescription("Bet Amount")
 		),
 
 	async execute(interaction) {
-		const bet = interaction.options.getInteger("int");
+		let bet = interaction.options.getInteger("int");
 		const idx = Math.floor(Math.random() * 2);
 		const choices = ["Heads", "Tails"];
 		const result = choices[idx];
 		const regex = new RegExp(/^\d+$/);
 
-		// User passes a valid bet as an argument, allow them to gamble their moralies
+		// Bet Validation
 		if (bet) {
 			if (!regex.test(bet)) {
 				return await interaction.reply(
@@ -46,101 +46,106 @@ module.exports = {
 		}
 
 		// Button setup
-		const buttonHeads = new MessageButton()
-			.setCustomId("Heads")
-			.setLabel("Heads")
-			.setStyle("SECONDARY");
-
-		const buttonTails = new MessageButton()
-			.setCustomId("Tails")
-			.setLabel("Tails")
-			.setStyle("SECONDARY");
-
-		const row = new MessageActionRow().addComponents([
-			buttonHeads,
-			buttonTails,
-		]);
+		const row = new MessageActionRow()
+			.addComponents(
+				new MessageButton()
+					.setCustomId("Heads")
+					.setLabel("Heads")
+					.setStyle("SECONDARY"),
+				new MessageButton()
+					.setCustomId("Tails")
+					.setLabel("Tails")
+					.setStyle("SECONDARY"),
+				new MessageButton()
+					.setCustomId("CANCEL")
+					.setLabel("❌ Cancel")
+					.setStyle("DANGER"),
+		);
 
 		await interaction.reply({
-			content: "Heads or Tails?",
+			content: `
+				> __**Heads or Tails?**__
+				> Select from the buttons below.
+				> You are betting: ${bet ? bet : 0} Morale.`,
 			components: [row],
 		});
 
-		// Spawns a collector to collect respones from the buttons, user has 8 seconds to click the buttons.
-		const collector = interaction.channel.createMessageComponentCollector({
-			componentType: "BUTTON",
-			time: 8000,
+		const message = await interaction.fetchReply();
+
+		// Collector: Only collect from the user that called the cmd, max 1 button click, listen for 8 seconds
+		const colFilter = (buttonInteraction) => {
+			buttonInteraction.deferUpdate();
+			return interaction.user.id === buttonInteraction.user.id;
+		}
+
+		const collector = message.createMessageComponentCollector({
+			componentType : "BUTTON",
+			max : 1,
+			filter : colFilter,
+			time: 1000 * 8,
 		});
 
-		let choice;
-
-		collector.on("collect", async (buttonInteraction) => {
-			if (buttonInteraction.user.id === interaction.user.id) {
-				choice = buttonInteraction.customId;
-
-				// Set colors and disable all buttons
-				row.components.forEach((component) => {
-					if (component.customId === choice && choice === result) {
-						component.setStyle("SUCCESS");
-					}
-
-					if (component.customId === choice && choice !== result) {
-						component.setStyle("DANGER");
-					}
-					component.setDisabled(true);
-				});
-
-				// Game Logic: Determine if the user's choice matches the result
-				// Also handle any bets that were placed at the time of playing the game. Deduct/Add to user's balance.
-				let message = "";
-				const guildId = interaction.guild.id;
-				const userId = interaction.member.user.id;
-
-				message += `You picked: ${choice}`;
-
-				if (choice === result) {
-					message += `\nYou won!!! The flip was ${result}.`;
-					if (bet) {
-						message += `\n${bet} Morale has been added to your account!`;
-						await dbFunctions.updateBalance(guildId, userId, bet);
-					}
-				} else {
-					message += `\nYou lost. The flip was ${result}.`;
-					if (bet) {
-						message += `\n${bet} Morale has been deducted from your account.`;
-						await dbFunctions.updateBalance(guildId, userId, -bet);
-					}
-				}
-
-				await buttonInteraction.reply({
-					content: message,
-					components: [row],
-				});
-
-				collector.stop();
-			}
-			// Another user attempted to click on the buttons.
-			else {
-				await buttonInteraction.reply({
-					content: `These buttons aren't for you!`,
-					ephemeral: true,
-				});
-			}
-		});
-
-		// Collector End Event -> Close out the main interaction.
+		// Collector End Event: Handles game logic and closure
 		collector.on("end", async (collected) => {
-			if (!choice) {
+
+			if (collected.size === 0) {
 				return await interaction.editReply({
-					content: "Please click on the Heads or Tails buttons.",
+					content: `
+						> __**Game Cancelled**__
+						> Any bets have been refunded.
+						> Please click on the Heads or Tails buttons. The time limit is 8 seconds.`,
 					components: [],
 				});
 			}
 
-			return await interaction.editReply({
-				content: "This coinflip session has completed.",
-				components: [],
+			const choice = collected.first().customId;
+
+			if (choice === "CANCEL") {
+				return await interaction.editReply({
+					content: `
+						> __**Game Cancelled**__
+						> Any bets have been refunded.`,
+					components: []
+				})
+			}
+
+			// Pop the cancel button
+			row.components.pop()
+
+			// Set colors and disable all buttons
+			row.components.forEach((component) => {
+				if (component.customId === choice && choice === result) {
+					component.setStyle("SUCCESS");
+				}
+
+				if (component.customId === choice && choice !== result) {
+					component.setStyle("DANGER");
+				}
+				component.setDisabled(true);
 			});
+
+			const guildId = interaction.guild.id;
+			const userId = interaction.member.user.id;
+			const win = choice === result ? true : false;
+
+			let message = `
+				> __**Heads or Tails?**__
+				> **Choice**: ${choice}.
+				> **Result**: ${result}.
+				> 
+				${win ? `> You won!!! 🎉` : `> You lost... 😥`}`;
+
+			if (bet) {
+				message += `\n> ${bet} Morale has been ${win ? `added to` : `deducted from`} your balance.`;
+				bet = win ? bet : -bet;
+				await dbFunctions.updateBalance(guildId, userId, bet);
+			}
+
+			return await interaction.editReply({
+				content: message,
+				components: [row]
+			});
+			
 		});
 	},
 };
