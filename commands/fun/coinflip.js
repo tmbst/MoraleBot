@@ -9,7 +9,7 @@ const { SlashCommandBuilder } = require("@discordjs/builders");
 */
 
 module.exports = {
-	cooldown: 2,
+	cooldown: 8,
 
 	data: new SlashCommandBuilder()
 		.setName("coinflip")
