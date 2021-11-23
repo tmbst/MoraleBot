@@ -7,7 +7,7 @@ module.exports = {
 
 	data: new SlashCommandBuilder()
 		.setName("ping")
-		.setDescription("Returns an embed with latency details."),
+		.setDescription("Displays latency details."),
 
 	async execute(interaction) {
 
