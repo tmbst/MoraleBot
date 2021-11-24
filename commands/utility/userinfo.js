@@ -2,18 +2,12 @@ const { MessageEmbed } = require("discord.js");
 const { DateTime } = require("luxon");
 const { SlashCommandBuilder } = require("@discordjs/builders");
 
-/*
-	Slash Command: Userinfo
-	Uses Database?: No
-	Description: This command pulls from the GuildMember and User classes and displays info in an embed.
-*/
-
 module.exports = {
-	cooldown: 3,
+	cooldown: 2,
 
 	data: new SlashCommandBuilder()
 		.setName("userinfo")
-		.setDescription("Get user information")
+		.setDescription("⎾🔨 Utility⏌ Displays information about a user.")
 		.addUserOption((option) =>
 			option.setName("user").setDescription("Specify a user.")
 		),
@@ -30,7 +24,7 @@ module.exports = {
 			guildMember = interaction.member;
 		}
 
-		// Extract various data from the User and GuildMember Classes and place into embed
+		// Extract various data from the User and GuildMember Classes
 		const userRegistered = DateTime.fromJSDate(user.createdAt).toLocaleString(DateTime.DATE_MED);
 		const userName = user.username;
 		const userDiscrim = user.discriminator;
@@ -39,11 +33,6 @@ module.exports = {
 		const guildMemberJoined = DateTime.fromJSDate(guildMember.joinedAt).toLocaleString(DateTime.DATE_MED);
 		const guildMemberNickname = guildMember.nickname;
 		const guildMemberColor = guildMember.displayColor;
-		const guildMemberRolesSize = guildMember.roles.cache.size - 1;
-		const guildMemberRolesText = guildMember.roles.cache
-			.map((r) => r)
-			.slice(0, -1)
-			.join(" | ");
 
 		let guildMemberPremium;
 
@@ -51,38 +40,46 @@ module.exports = {
 			guildMemberPremium = DateTime.fromJSDate(guildMember.premiumSince).toLocaleString(DateTime.DATE_MED);
 		}
 
+		// Grab all the guild member's roles
+		const guildMemberRolesSize = guildMember.roles.cache.size - 1;
+		const guildMemberRoles = guildMember.roles.cache.sort((r1, r2) => r2.rawPosition - r1.rawPosition);
+		const guildMemberRolesText = guildMemberRoles
+			.map((r) => r)
+			.slice(0, -1)
+			.join(", ");
+
+		// Grab all the guild member's award roles
+		const guildMemberAwards = guildMember.roles.cache
+			.map((role) => role)
+			.filter((role) => role.name.toLowerCase()
+			.includes('award'));
+		const guildMemberAwardsText = guildMemberAwards.join(", ");
+		const guildMemberAwardsSize = guildMemberAwards.length;
+
 		const userInfoEmbed = new MessageEmbed()
 			.setColor(guildMemberColor)
 			.setThumbnail(userAvatar)
 			.setAuthor(userName + "#" + userDiscrim, userAvatar)
-			.addField(
-				"Nickname",
-				guildMemberNickname ? guildMemberNickname : "No Nickname set."
-			)
+			.addField("🔖 Nickname", guildMemberNickname ? guildMemberNickname : "No nickname set")
 			.addFields(
 				{
-					name: "Registered Date",
+					name: "✅ Registered",
 					value: userRegistered,
 					inline: true,
 				},
 				{
-					name: "Joined Server Date",
+					name: "📆 Joined Server",
 					value: guildMemberJoined,
 					inline: true,
 				},
 				{
-					name: "Booster Date",
-					value: guildMemberPremium ? guildMemberPremium : "N/A",
+					name: "💎 Booster",
+					value: guildMemberPremium ? guildMemberPremium : "Not a booster",
 					inline: true,
-				}
-			)
-			.addField(
-				`Roles [${guildMemberRolesSize}]`,
-				guildMemberRolesText ? guildMemberRolesText : "No roles assigned."
-			)
-			.setTimestamp();
+				})
+			.addField(`🎭 All Roles (${guildMemberRolesSize})`, guildMemberRolesText ? guildMemberRolesText : "No roles assigned")
+			.addField(`🏆 Award Roles (${guildMemberAwardsSize})`, guildMemberAwardsText ? guildMemberAwardsText : "No awards")
 
-		// Send embed
 		return await interaction.reply({ embeds: [userInfoEmbed] });
 	},
 };

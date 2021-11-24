@@ -1,20 +1,20 @@
 const dbFunctions = require("../../database/dbFunctions");
 const { SlashCommandBuilder } = require("@discordjs/builders");
-const { adminRoleId } = require("../../config.json");
+const { devRoleId } = require("../../config.json");
 
 module.exports = {
 	cooldown: 3,
 
 	data: new SlashCommandBuilder()
 		.setName("restart")
-		.setDescription("[ADMIN CMD] Brings the Database up to date if the bot goes offline."),
+		.setDescription("⎾🔨 Utility⏌ Brings the Database up to date if the bot goes offline."),
 
 	async execute(interaction) {
 
-		const isAdmin = interaction.member.roles.cache.has(adminRoleId);
+		const isDev = interaction.member.roles.cache.has(devRoleId);
 
-		if (!isAdmin) {
-			return interaction.reply("This command is restricted to administrative staff.");
+		if (!isDev) {
+			return interaction.reply("This command is for the Development Team only.");
 		}
 
 		let message = "";

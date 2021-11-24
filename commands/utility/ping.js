@@ -7,7 +7,7 @@ module.exports = {
 
 	data: new SlashCommandBuilder()
 		.setName("ping")
-		.setDescription("Displays latency details."),
+		.setDescription("⎾🔨 Utility⏌ Displays latency details."),
 
 	async execute(interaction) {
 
@@ -27,7 +27,7 @@ module.exports = {
 				{name: 'API Latency', value: `**${apiLatency}ms**`},
 			)
 
-		return interaction.editReply({
+		return await interaction.editReply({
 			content : 'Ping Calculated.', 
 			embeds: [pingEmbed] 
 		});
