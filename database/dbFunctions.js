@@ -45,24 +45,25 @@ module.exports = {
 		return name;
 	},
 	// Check for any guild members that joined or retired while the bot was offline
-	async readMemberValidation(discordGuildMembers, request) {
-		const mongoGuildMembers = [];
+	async readMemberValidation(guildMembers, request) {
+		const mongoGuildMemberIds = [];
 		const col = this.getCollection("guildMembers");
 		const cursor = col.find({});
+
 		await cursor.forEach((doc) =>
-			mongoGuildMembers.push(doc.guildMemberID)
+			mongoGuildMemberIds.push(doc.guildMemberID)
 		);
 
 		let difference;
 
 		if (request === "retired") {
-			difference = mongoGuildMembers.filter(
-				(x) => !discordGuildMembers.includes(x)
-			);
+			difference = mongoGuildMemberIds.filter((id) => {
+				return !guildMembers.has(id)
+			});
 		} else if (request === "new") {
-			difference = discordGuildMembers.filter(
-				(x) => !mongoGuildMembers.includes(x)
-			);
+			difference = guildMembers.filter((member) => {
+				return !mongoGuildMemberIds.includes(member.id)
+			});
 		}
 
 		return difference;
