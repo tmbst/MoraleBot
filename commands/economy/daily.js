@@ -1,5 +1,5 @@
 const dbFunctions = require("../../database/dbFunctions");
-const { dailyAmount, dailyReset, dailyMultiplier, boostedRoleId } = require("../../config.json");
+const { dailyAmount, dailyMultiplier, boostedRoleId } = require("../../config.json");
 const { DateTime, Duration } = require("luxon");
 const { SlashCommandBuilder } = require("@discordjs/builders");
 const { MessageEmbed, MessageAttachment } = require("discord.js");
@@ -9,67 +9,66 @@ module.exports = {
 
 	data: new SlashCommandBuilder()
 		.setName("daily")
-		.setDescription("⎾💵 Economy⏌ Obtain your dailies."),
+		.setDescription("⎾💵 Economy⏌ Obtain your dailies. Resets at midnight PST"),
 
 	async execute(interaction) {
 		const guildId = interaction.guild.id;
 		const userId = interaction.member.user.id;
 
-		// Compare the time the User has claimed their dailies to the current time.
-		const lastDailyClaimed = await dbFunctions.readLastDailyClaimed(guildId, userId);
+		const currentDate = DateTime.now().setZone("America/Los_Angeles");
 
-		const currDateTime = DateTime.now().toMillis();
+		// Compare the date the dailies were claimed to the current date.
+		const lastDailyMillis = await dbFunctions.readLastDailyClaimed(guildId, userId);
+		const claimedDate = DateTime.fromMillis(lastDailyMillis).setZone("America/Los_Angeles");
 
-		// Currently set to check if 24 hours has passed since they last claimed their dailies.
-		const difference = Math.floor(dailyReset - (currDateTime - lastDailyClaimed));
+		if (claimedDate.startOf("day") < currentDate.startOf("day")) {
+			let finalAmount = dailyAmount;
+			let finalMultiplier = 1.0;
+			let message = "";
 
-		if (difference > 0) {
-			const timeRemaining = Duration.fromMillis(difference);
+			// Server Boosters get a multiplier when collecting their dailies.
+			if (interaction.member.roles.cache.has(boostedRoleId)) {
+				finalMultiplier = dailyMultiplier;
+				finalAmount = dailyAmount * finalMultiplier;
+				message += `💎 Thanks for Boosting! ${finalMultiplier}x applied!\n`;
+			}
 
-			return await interaction.reply(`Dailies already claimed. Time remaining: ${timeRemaining.toFormat("h")}h, ${timeRemaining.toFormat("m") % 60}m`);
-		}
+			// Mongo: Update the User's Balance and Claimed Time
+			await dbFunctions.updateBalance(guildId, userId, finalAmount);
+			await dbFunctions.updateDailiesClaimed(guildId, userId, currentDate.toMillis());
 
-		let finalAmount = dailyAmount;
-		let finalMultiplier = 1.0;
-		let message = "";
+			// Embed setup
+			const userName = interaction.member.user.username;
+			const userAvatar = interaction.member.user.displayAvatarURL();
 
-		// Server Boosters get a multiplier when collecting their dailies.
-		if (interaction.member.roles.cache.has(boostedRoleId)) {
-			finalMultiplier = dailyMultiplier;
-			finalAmount = dailyAmount * finalMultiplier;
-			message += `Thanks for Boosting! ${finalMultiplier}x applied!\n`;
-		}
-
-		// Mongo: Update the User's Balance and Claimed Time
-		await dbFunctions.updateBalance(guildId, userId, finalAmount);
-		await dbFunctions.updateDailiesClaimed(guildId, userId, currDateTime);
-
-		// Embed setup
-		const userName = interaction.member.user.username;
-		const userAvatar = interaction.member.user.displayAvatarURL();
-
-		const attachment = new MessageAttachment(
-			"./assets/images/chest.gif",
-			"chest.gif"
-		);
-
-		const dailyEmbed = new MessageEmbed()
-			.setColor("#FFFF00")
-			.setTitle("Daily Morale Claimed!")
-			.setAuthor(userName, userAvatar)
-			.setThumbnail("attachment://chest.gif")
-			.addFields(
-				{ name: "Amount", value: `${finalAmount}`, inline: true },
-				{ name: "Multiplier", value: `${finalMultiplier}`, inline: true})
-			.setTimestamp()
-			.setFooter(
-				message ? message : "Tip: Server Boosting = More Morale!"
+			const attachment = new MessageAttachment(
+				"./assets/images/chest.gif",
+				"chest.gif"
 			);
 
-		return await interaction.reply({
-			embeds: [dailyEmbed],
-			files: [attachment]
-		});
-		
+			const dailyEmbed = new MessageEmbed()
+				.setColor("#FFFF00")
+				.setTitle("Daily Morale Claimed!")
+				.setAuthor(userName, userAvatar)
+				.setThumbnail("attachment://chest.gif")
+				.addFields(
+					{ name: "💰 Amount", value: `${finalAmount}`, inline: true },
+					{ name: "💌 Multiplier", value: `${finalMultiplier}`, inline: true})
+				.setTimestamp()
+				.setFooter(
+					message ? message : "❗️ Tip: Server Boosting = More Morale!"
+				);
+
+			return await interaction.reply({
+				embeds: [dailyEmbed],
+				files: [attachment]
+			});
+		} 
+		else {
+			return await interaction.reply({
+				content: `⌚️ Dailies already claimed. Please wait until **midnight (PST)** to claim your next set of dailies.`,
+				ephemeral: true
+			});
+		}
 	},
 };
