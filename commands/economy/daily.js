@@ -4,18 +4,12 @@ const { DateTime, Duration } = require("luxon");
 const { SlashCommandBuilder } = require("@discordjs/builders");
 const { MessageEmbed, MessageAttachment } = require("discord.js");
 
-/*
-	Slash Command: Daily
-	Uses Database?: Yes
-	Description: Use this command to collect daily Morale and update the User's balance.
-*/
-
 module.exports = {
 	cooldown: 3,
 
 	data: new SlashCommandBuilder()
 		.setName("daily")
-		.setDescription("Obtain your dailies."),
+		.setDescription("⎾💵 Economy⏌ Obtain your dailies."),
 
 	async execute(interaction) {
 		const guildId = interaction.guild.id;

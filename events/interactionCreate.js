@@ -34,7 +34,7 @@ module.exports = {
 			if (now < expirationTime) {
 				const timeLeft = (expirationTime - now) / 1000;
 				return await interaction.reply({
-                    content: `Please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.data.name}\` command.`,
+                    content: `⌚️ Please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.data.name}\` command.`,
                     ephemeral: true,
                 });
 			}
