@@ -9,7 +9,7 @@ module.exports = {
 
 	data: new SlashCommandBuilder()
 		.setName("daily")
-		.setDescription("⎾💵 Economy⏌ Obtain your dailies. Resets at midnight PST"),
+		.setDescription("⎾💵 Economy⏌ Obtain your dailies. Resets at midnight PST."),
 
 	async execute(interaction) {
 		const guildId = interaction.guild.id;

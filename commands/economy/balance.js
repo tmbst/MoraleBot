@@ -10,7 +10,7 @@ module.exports = {
 
 	data: new SlashCommandBuilder()
 		.setName("balance")
-		.setDescription("⎾💵 Economy⏌ Check your balance."),
+		.setDescription("⎾💵 Economy⏌ Displays your balance."),
 
 	async execute(interaction) {
 		/* 
@@ -22,7 +22,7 @@ module.exports = {
 			let fontSize = 60;
 			do {
 				// Assign the font to the context and decrement it so it can be measured again
-				ctx.font = `${(fontSize -= 10)}px "Futura"`;
+				ctx.font = `${(fontSize -= 5)}px "NotoSans"`;
 				// Compare pixel width of the text ot the canvas minus the approx avatar size
 			} while (ctx.measureText(text).width > canvas.width - 300);
 			// Return the result to use in canvas
@@ -34,8 +34,7 @@ module.exports = {
 			Description: Creates the Canvas image and sends it to the Discord Channel.
 		*/
 		const createCanvas = async (interaction) => {
-			// Create new Canvas with dimension size of tmbst_wallet.png
-			Canvas.registerFont("./assets/fonts/Futura Now Headline Bd.otf", {family: "Futura"});
+			Canvas.registerFont("./assets/fonts/NotoSansJP-Bold.otf", {family: "NotoSans"});
 
 			const canvas = Canvas.createCanvas(600, 300);
 			const ctx = canvas.getContext("2d");
