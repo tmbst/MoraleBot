@@ -60,7 +60,7 @@ module.exports = {
 			.setColor(guildMemberColor)
 			.setThumbnail(userAvatar)
 			.setAuthor(userName + "#" + userDiscrim, userAvatar)
-			.addField("🔖 Nickname", guildMemberNickname ? guildMemberNickname : "No nickname set")
+			.addField("🏷 Nickname", guildMemberNickname ? guildMemberNickname : "No nickname set")
 			.addFields(
 				{
 					name: "✅ Registered",
