@@ -16,7 +16,7 @@ module.exports = {
 		.addStringOption((option) =>
 			option
 				.setName("input")
-				.setDescription("Choices: david, joey, goddammit, pepperoncini, or bonk")
+				.setDescription("Choices: david, joey, goddammit, pepperoncini, bonk, or bingbong")
 				.setRequired(true)
 		),
 
@@ -63,6 +63,11 @@ module.exports = {
 
 			case "bonk":
 				filePath = `../../assets/sounds/general/bonkSound.mp3`;
+
+				break;
+
+			case "bingbong":
+				filePath = `../../assets/sounds/general/bingBong.mp3`;
 
 				break;
 
