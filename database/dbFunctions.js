@@ -50,19 +50,17 @@ module.exports = {
 		const col = this.getCollection("guildMembers");
 		const cursor = col.find({});
 
-		await cursor.forEach((doc) =>
-			mongoGuildMemberIds.push(doc.guildMemberID)
-		);
+		await cursor.forEach((doc) => mongoGuildMemberIds.push(doc.guildMemberID));
 
 		let difference;
 
 		if (request === "retired") {
 			difference = mongoGuildMemberIds.filter((id) => {
-				return !guildMembers.has(id)
+				return !guildMembers.has(id);
 			});
 		} else if (request === "new") {
 			difference = guildMembers.filter((member) => {
-				return !mongoGuildMemberIds.includes(member.id)
+				return !mongoGuildMemberIds.includes(member.id);
 			});
 		}
 
