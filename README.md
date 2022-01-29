@@ -21,14 +21,6 @@
 
 ## Setup
 
-### Git LFS
-
-All sound files for voice commands are stored using Git-LFS. Please install Git-LFS using your environment's package manager and run the following command **before cloning the repository**:
-
-    git lfs install
-
-**Note:** If you do not install Git-LFS, git will only download pointers to the sound files. Run ``git lfs fetch`` after you install and configure Git-LFS to download the sounds.
-
 ### Dockerfile
 
 A Dockerfile is provided for your convenience. Assuming you have Docker installed on your machine, this will enable you to easily setup and run the bot using the following commands:
@@ -42,7 +34,7 @@ A Dockerfile is provided for your convenience. Assuming you have Docker installe
     docker container stop <container_id>  # Assumes you ran w/ --rm flag
     docker container ls  # Verify container was stopped
 
-Ping Alex if you have questions.
+Ping Alex (@a-gavin) if you have questions.
 
 ## Contributing to the Project
 Team Morale Boost Discord server members are welcome to contribute to the Discord Bot.
