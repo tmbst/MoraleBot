@@ -12,8 +12,10 @@ module.exports = {
 		.setDescription("⎾💵 Economy⏌ Obtain your dailies. Resets at midnight PST."),
 
 	async execute(interaction) {
-		const guildId = interaction.guild.id;
-		const userId = interaction.member.user.id;
+		const guildData = interaction.guild;
+		const userData = interaction.member.user;
+		const guildId = guildData.id;
+		const userId = userData.id;
 
 		const currentDate = DateTime.now().setZone("America/Los_Angeles");
 
