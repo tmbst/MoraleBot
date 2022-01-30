@@ -3,7 +3,4 @@
     "singleQuote": false,
     "semi": true
 }
-<<<<<<< HEAD
 
-=======
->>>>>>> 7ed41fa (Add prettierrc for those using prettier, prettier dbFunctions.js)
