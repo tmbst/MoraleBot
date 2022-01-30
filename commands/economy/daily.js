@@ -20,8 +20,14 @@ module.exports = {
 		const currentDate = DateTime.now().setZone("America/Los_Angeles");
 
 		// Compare the date the dailies were claimed to the current date.
-		const lastDailyMillis = await dbFunctions.readLastDailyClaimed(guildId, userId);
-		const claimedDate = DateTime.fromMillis(lastDailyMillis).setZone("America/Los_Angeles");
+		const lastDailyMillis = await dbFunctions.readLastDailyClaimed(
+			guildData,
+			userData
+		);
+
+		const claimedDate = DateTime.fromMillis(lastDailyMillis).setZone(
+			"America/Los_Angeles"
+		);
 
 		if (claimedDate.startOf("day") < currentDate.startOf("day")) {
 			let finalAmount = dailyAmount;

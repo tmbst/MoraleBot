@@ -23,7 +23,7 @@ module.exports = {
 			guildMemberID: userData.id,
 			guildMemberName: userData.username,
 			guildMemberBalance: 0,
-			guildMemberDailyClaimed: new Date(0),
+			guildMemberDailyClaimed: 0,
 		};
 
 		await col.insertOne(guildMemberDocument);
@@ -86,7 +86,7 @@ module.exports = {
 	},
 	// Read the last daily claimed of a guild member.
 	async readLastDailyClaimed(guildData, userData) {
-		const user = this.getGuildMemberCreate(guildData, userData);
+		const user = await this.getGuildMemberCreate(guildData, userData);
 		return user.guildMemberDailyClaimed;
 	},
 	// Update the last daily claimed of a guild member.
@@ -111,7 +111,7 @@ module.exports = {
 		const updatedBalance = currBalance + parseInt(amount);
 
 		await col.updateOne(
-			{ guildID: guildID, guildMemberID: userID },
+			{ guildID: guildData.id, guildMemberID: userData.id },
 			{ $set: { guildMemberBalance: updatedBalance } }
 		);
 	},

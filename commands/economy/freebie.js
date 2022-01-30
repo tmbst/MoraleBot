@@ -10,14 +10,15 @@ module.exports = {
 		.setDescription("⎾💵 Economy⏌ Snag some spare change."),
 
 	async execute(interaction) {
-
-		const guildId = interaction.guild.id;
-		const userId = interaction.member.user.id;
-		const balance = await dbFunctions.readBalance(guildId, userId);
+		const guildData = interaction.guild;
+		const userData = interaction.member.user;
+		const guildId = guildData.id;
+		const userId = userData.id;
+		const balance = await dbFunctions.readBalance(guildData, userData);
 		let message = "";
 
 		if (balance < freebieAmount) {
-			await dbFunctions.updateBalance(guildId, userId, freebieAmount);
+			await dbFunctions.updateBalance(guildData, userData, freebieAmount);
 			message += `✅ Broke again? A Bank of Morale banker slides you **${freebieAmount}** Morale!`;
 		} else {
 			message += `❌ Your balance is **${balance}**. You have enough Morale to survive.`;
