@@ -16,7 +16,7 @@ module.exports = {
 		.addStringOption((option) =>
 			option
 				.setName("input")
-				.setDescription("Choices: david, joey, goddammit, pepperoncini, bonk, or bingbong")
+				.setDescription("Choices: david, joey, goddammit, pepperoncini, bonk, animal, or bingbong")
 				.setRequired(true)
 		),
 
@@ -43,6 +43,14 @@ module.exports = {
 				const randomDavidSound = files[Math.floor(Math.random() * files.length)];
 
 				filePath = `../../assets/sounds/david/${randomDavidSound}`;
+
+				break;
+			
+			case "animal":
+				const animalFiles = fs.readdirSync("./assets/sounds/animal/");
+				const randomAnimalSound = animalFiles[Math.floor(Math.random() * animalFiles.length)];
+
+				filePath = `../../assets/sounds/animal/${randomAnimalSound}`;
 
 				break;
 
