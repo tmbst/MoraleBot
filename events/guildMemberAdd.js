@@ -4,7 +4,7 @@ const { generalChannelId, lurkerRoleId } = require("../config.json");
 
 /*
 	Event: guildMemberAdd
-	Uses Database?: Yes
+	Uses Database?: No
 	Description: Emitted whenever a user joins a guild.
 */
 

@@ -3,7 +3,7 @@ const { generalChannelId } = require("../config.json");
 
 /*
 	Event: guildMemberRemove
-	Uses Database?: Yes
+	Uses Database?: No
 	Description: Emitted whenever a member leaves a guild, or is kicked.
 */
 

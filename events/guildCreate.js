@@ -1,9 +1,8 @@
-const dbFunctions = require("../database/dbFunctions");
 const { generalChannelId } = require("../config.json");
 
 /*
 	Event: guildCreate
-	Uses Database?: Yes
+	Uses Database?: No
 	Description: Emitted whenever the client joins a guild.
 */
 
