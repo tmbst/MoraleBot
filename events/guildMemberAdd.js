@@ -1,4 +1,3 @@
-const dbFunctions = require("../database/dbFunctions");
 const Discord = require("discord.js");
 const { DateTime } = require("luxon");
 const { generalChannelId, lurkerRoleId } = require("../config.json");
@@ -38,7 +37,6 @@ module.exports = {
 
 		channel.send({ embeds: [welcomeEmbed] });
 
-		// DB Add New User (no bots allowed)
 		if (!member.user.bot) {
 			// Add the default role to the user
 			let lurkerRole = member.guild.roles.cache.get(lurkerRoleId);
@@ -46,8 +44,6 @@ module.exports = {
 			if (!member.roles.cache.has(lurkerRole.id)) {
 				member.roles.add(lurkerRole).catch(console.error);
 			}
-
-			dbFunctions.createGuildMember(member.guild, member.user);
 		}
 	},
 };

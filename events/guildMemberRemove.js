@@ -1,4 +1,3 @@
-const dbFunctions = require("../database/dbFunctions");
 const Discord = require("discord.js");
 const { generalChannelId } = require("../config.json");
 
@@ -32,8 +31,5 @@ module.exports = {
 		const channel = member.guild.channels.cache.get(generalChannelId);
 
 		channel.send({ embeds: [leavingEmbed] });
-
-		// DB delete user
-		dbFunctions.deleteGuildMember(member.guild.id, member.user.id);
 	},
 };
