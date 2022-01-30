@@ -42,8 +42,12 @@ module.exports = {
 			}
 
 			// Mongo: Update the User's Balance and Claimed Time
-			await dbFunctions.updateBalance(guildId, userId, finalAmount);
-			await dbFunctions.updateDailiesClaimed(guildId, userId, currentDate.toMillis());
+			await dbFunctions.updateBalance(guildData, userData, finalAmount);
+			await dbFunctions.updateDailiesClaimed(
+				guildId,
+				userId,
+				currentDate.toMillis()
+			);
 
 			// Embed setup
 			const userName = interaction.member.user.username;
