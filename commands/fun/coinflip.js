@@ -71,7 +71,7 @@ module.exports = {
 
 		// Collector End Event: Handles game logic and closure
 		collector.on("end", async (collected) => {
-			// User took longer than 8 seconds to respond
+			// User took longer than 4 seconds to respond
 			if (collected.size === 0) {
 				return await interaction.editReply({
 					content: `
