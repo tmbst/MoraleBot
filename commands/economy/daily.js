@@ -12,14 +12,22 @@ module.exports = {
 		.setDescription("⎾💵 Economy⏌ Obtain your dailies. Resets at midnight PST."),
 
 	async execute(interaction) {
-		const guildId = interaction.guild.id;
-		const userId = interaction.member.user.id;
+		const guildData = interaction.guild;
+		const userData = interaction.member.user;
+		const guildId = guildData.id;
+		const userId = userData.id;
 
 		const currentDate = DateTime.now().setZone("America/Los_Angeles");
 
 		// Compare the date the dailies were claimed to the current date.
-		const lastDailyMillis = await dbFunctions.readLastDailyClaimed(guildId, userId);
-		const claimedDate = DateTime.fromMillis(lastDailyMillis).setZone("America/Los_Angeles");
+		const lastDailyMillis = await dbFunctions.readLastDailyClaimed(
+			guildData,
+			userData
+		);
+
+		const claimedDate = DateTime.fromMillis(lastDailyMillis).setZone(
+			"America/Los_Angeles"
+		);
 
 		if (claimedDate.startOf("day") < currentDate.startOf("day")) {
 			let finalAmount = dailyAmount;
@@ -34,8 +42,12 @@ module.exports = {
 			}
 
 			// Mongo: Update the User's Balance and Claimed Time
-			await dbFunctions.updateBalance(guildId, userId, finalAmount);
-			await dbFunctions.updateDailiesClaimed(guildId, userId, currentDate.toMillis());
+			await dbFunctions.updateBalance(guildData, userData, finalAmount);
+			await dbFunctions.updateDailiesClaimed(
+				guildId,
+				userId,
+				currentDate.toMillis()
+			);
 
 			// Embed setup
 			const userName = interaction.member.user.username;

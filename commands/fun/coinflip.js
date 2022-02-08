@@ -34,8 +34,8 @@ module.exports = {
 			}
 
 			const balance = await dbFunctions.readBalance(
-				interaction.guild.id,
-				interaction.member.user.id
+				interaction.guild,
+				interaction.member.user
 			);
 
 			if (bet > balance) {
@@ -124,8 +124,8 @@ module.exports = {
 				component.setDisabled(true);
 			});
 
-			const guildId = interaction.guild.id;
-			const userId = interaction.member.user.id;
+			const guildData = interaction.guild;
+			const userData = interaction.member.user;
 			const win = choice === result ? true : false;
 
 			let message = `
@@ -138,7 +138,7 @@ module.exports = {
 			if (bet) {
 				message += `\n> ${bet} Morale has been ${win ? `added to` : `deducted from`} your balance.`;
 				bet = win ? bet : -bet;
-				await dbFunctions.updateBalance(guildId, userId, bet);
+				await dbFunctions.updateBalance(guildData, userData, bet);
 			}
 
 			return await interaction.editReply({

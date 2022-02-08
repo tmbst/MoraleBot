@@ -65,8 +65,11 @@ module.exports = {
 			// Set the User's Display Name & Balance on the Canvas
 			ctx.fillText(`${interaction.member.displayName}`, 30, 285);
 
-			const balance = await dbFunctions.readBalance(interaction.guild.id, interaction.member.user.id);
-			
+			const balance = await dbFunctions.readBalance(
+				interaction.guild,
+				interaction.member.user
+			);
+
 			ctx.font = applyText(canvas, `${balance}`);
 			ctx.fillText(`${balance}`, 100, 170);
 

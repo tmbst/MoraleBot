@@ -23,10 +23,28 @@ module.exports = {
 			guildMemberID: userData.id,
 			guildMemberName: userData.username,
 			guildMemberBalance: 0,
-			guildMemberDailyClaimed: new Date(0),
+			guildMemberDailyClaimed: 0,
 		};
 
 		await col.insertOne(guildMemberDocument);
+	},
+	// Retrieve guild member from Database
+	async getGuildMember(guildID, guildMemberID) {
+		const col = this.getCollection("guildMembers");
+		return await col.findOne({
+			guildID,
+			guildMemberID,
+		});
+	},
+	// Retrieve guild member, create user if it doesn't exist
+	async getGuildMemberCreate(guildData, userData) {
+		let user = await this.getGuildMember(guildData.id, userData.id);
+		if (!user) {
+			await this.createGuildMember(guildData, userData);
+			user = await this.getGuildMember(guildData.id, userData.id);
+		}
+
+		return user;
 	},
 	// Delete a guild member from the Database
 	async deleteGuildMember(guildDataID, userDataID) {
@@ -50,33 +68,26 @@ module.exports = {
 		const col = this.getCollection("guildMembers");
 		const cursor = col.find({});
 
-		await cursor.forEach((doc) =>
-			mongoGuildMemberIds.push(doc.guildMemberID)
-		);
+		await cursor.forEach((doc) => mongoGuildMemberIds.push(doc.guildMemberID));
 
 		let difference;
 
 		if (request === "retired") {
 			difference = mongoGuildMemberIds.filter((id) => {
-				return !guildMembers.has(id)
+				return !guildMembers.has(id);
 			});
 		} else if (request === "new") {
 			difference = guildMembers.filter((member) => {
-				return !mongoGuildMemberIds.includes(member.id)
+				return !mongoGuildMemberIds.includes(member.id);
 			});
 		}
 
 		return difference;
 	},
 	// Read the last daily claimed of a guild member.
-	async readLastDailyClaimed(guildID, userID) {
-		const col = this.getCollection("guildMembers");
-		const doc = await col.findOne({
-			guildID: guildID,
-			guildMemberID: userID,
-		});
-
-		return doc.guildMemberDailyClaimed;
+	async readLastDailyClaimed(guildData, userData) {
+		const user = await this.getGuildMemberCreate(guildData, userData);
+		return user.guildMemberDailyClaimed;
 	},
 	// Update the last daily claimed of a guild member.
 	async updateDailiesClaimed(guildID, userID, currDateTime) {
@@ -88,24 +99,19 @@ module.exports = {
 		);
 	},
 	// Read the balance of a guild member.
-	async readBalance(guildID, userID) {
-		const col = this.getCollection("guildMembers");
-		const doc = await col.findOne({
-			guildID: guildID,
-			guildMemberID: userID,
-		});
-
-		return doc.guildMemberBalance;
+	async readBalance(guildData, userData) {
+		const user = await this.getGuildMemberCreate(guildData, userData);
+		return user.guildMemberBalance;
 	},
 	// Update the balance of a guild member.
-	async updateBalance(guildID, userID, amount) {
+	async updateBalance(guildData, userData, amount) {
 		const col = this.getCollection("guildMembers");
 
-		const currBalance = await this.readBalance(guildID, userID);
+		const currBalance = await this.readBalance(guildData, userData);
 		const updatedBalance = currBalance + parseInt(amount);
 
 		await col.updateOne(
-			{ guildID: guildID, guildMemberID: userID },
+			{ guildID: guildData.id, guildMemberID: userData.id },
 			{ $set: { guildMemberBalance: updatedBalance } }
 		);
 	},
