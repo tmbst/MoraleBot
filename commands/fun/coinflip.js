@@ -15,6 +15,7 @@ module.exports = {
 		),
 
 	async execute(interaction) {
+
 		const bet = interaction.options.getInteger("int");
 		const guildData = interaction.guild;
 		const userData = interaction.member.user;

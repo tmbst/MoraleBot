@@ -1,10 +1,9 @@
-const dbFunctions = require("../database/dbFunctions");
 const Discord = require("discord.js");
 const { generalChannelId } = require("../config.json");
 
 /*
 	Event: guildMemberRemove
-	Uses Database?: Yes
+	Uses Database?: No
 	Description: Emitted whenever a member leaves a guild, or is kicked.
 */
 
@@ -32,8 +31,5 @@ module.exports = {
 		const channel = member.guild.channels.cache.get(generalChannelId);
 
 		channel.send({ embeds: [leavingEmbed] });
-
-		// DB delete user
-		dbFunctions.deleteGuildMember(member.guild.id, member.user.id);
 	},
 };
