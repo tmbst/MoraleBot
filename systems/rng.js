@@ -7,7 +7,7 @@ module.exports = {
     */
 	async validate_bet(bet, guildData, userData) {
 		if (bet) {
-			const balance = await dbFunctions.readBalance(guildData.id, userData.id);
+			const balance = await dbFunctions.readBalance(guildData, userData);
 
 			// User doesn't have enough funds
 			if (bet > balance) {
@@ -70,7 +70,7 @@ module.exports = {
 			amount = -bet;
 		}
 
-		await dbFunctions.updateBalance(guildData.id, userData.id, amount);
+		await dbFunctions.updateBalance(guildData, userData, amount);
 
 		return message;
 	},
