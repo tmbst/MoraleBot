@@ -15,7 +15,6 @@ module.exports = {
 		),
 
 	async execute(interaction) {
-
 		const bet = interaction.options.getInteger("int");
 		const guildData = interaction.guild;
 		const userData = interaction.member.user;
@@ -108,8 +107,8 @@ module.exports = {
 					} else {
 						component.setStyle("DANGER");
 					}
-					component.setDisabled(true);
 				}
+				component.setDisabled(true);
 			});
 
 			return await interaction.editReply({
