@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "cmd": "node ./deploy-commands.js",
+    "start": "node ./index.js",
+    "restart": "npm run cmd && npm run start"
   },
   "repository": {
     "type": "git",
