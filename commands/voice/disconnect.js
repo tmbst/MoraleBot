@@ -1,5 +1,5 @@
 const fs = require("fs");
-const { SlashCommandBuilder } = require("@discordjs/builders");
+const { MoraleCommand } = require("../../utility/morale-commands.js ");
 const { getVoiceConnection } = require("@discordjs/voice");
 
 /*
@@ -9,9 +9,7 @@ const { getVoiceConnection } = require("@discordjs/voice");
 */
 
 module.exports = {
-	data: new SlashCommandBuilder()
-		.setName("disconnect")
-		.setDescription("Disconnect the bot from voice chat."),
+	data: MoraleCommand("Disconnect"),
 
 	async execute(interaction) {
 		const userVoiceChannel = interaction.member.voice.channel;

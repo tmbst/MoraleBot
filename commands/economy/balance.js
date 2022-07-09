@@ -3,14 +3,12 @@ const { boostedRoleId } = require("../../config.json");
 const Canvas = require("canvas");
 const { MessageAttachment } = require("discord.js");
 const path = require("path");
-const { SlashCommandBuilder } = require("@discordjs/builders");
+const { MoraleCommand } = require("../../utility/morale-commands.js ");
 
 module.exports = {
 	cooldown: 3,
 
-	data: new SlashCommandBuilder()
-		.setName("balance")
-		.setDescription("⎾💵 Economy⏌ Displays your balance."),
+	data: MoraleCommand("Balance"),
 
 	async execute(interaction) {
 		/* 

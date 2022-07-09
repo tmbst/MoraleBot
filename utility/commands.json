@@ -1,0 +1,44 @@
+{
+	"Balance": {
+		"name": "balance",
+		"desc": "⎾💵 Economy⏌ Displays your balance."
+	},
+	"Daily": {
+		"name": "daily",
+		"desc": "⎾💵 Economy⏌ Obtain your dailies. Resets at midnight PST."
+	},
+	"Freebie": {
+		"name": "freebie",
+		"desc": "⎾💵 Economy⏌ Snag some spare change."
+	},
+	"Coinflip": {
+		"name": "coinflip",
+		"desc": "⎾🎉 Fun⏌Flip a coin! Optionally, bet some Morale.",
+		"intDesc": "Bet Amount"
+	},
+	"Poll": {
+		"name": "poll",
+		"desc": "Create a new poll.",
+		"strDesc": "Enter a string",
+        "required": true
+	},
+	"Ping": {
+		"name": "ping",
+		"desc": "⎾🔨 Utility⏌ Displays latency details."
+	},
+	"UserInfo": {
+		"name": "userinfo",
+		"desc": "⎾🔨 Utility⏌ Displays information about a user.",
+        "userDesc": "Specify a user."
+	},
+	"Disconnect": {
+		"name": "disconnect",
+		"desc": "Disconnect the bot from voice chat."
+	},
+    "Play": {
+		"name": "play",
+		"desc": "Play audio files.",
+		"strDesc": "Choices: david, joey, goddammit, pepperoncini, bonk, animal, or bingbong",
+        "required": true
+	}
+}
