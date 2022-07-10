@@ -6,7 +6,6 @@ const fs = require("fs");
 const client = new Client({
 	intents: [
 		Intents.FLAGS.GUILDS,
-		Intents.FLAGS.GUILD_MESSAGES,
 		Intents.FLAGS.GUILD_MEMBERS,
 		Intents.FLAGS.GUILD_VOICE_STATES,
 	],
@@ -28,6 +27,7 @@ for (const folder of commandFolders) {
 	}
 }
 
+// Events Handler
 const eventFiles = fs
 	.readdirSync("./events")
 	.filter((file) => file.endsWith(".js"));
