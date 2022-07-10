@@ -1,13 +1,11 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
+const { MoraleCommand } = require("../../utility/morale-commands.js ");
 const { MessageEmbed } = require('discord.js');
 
 module.exports = {
 
 	cooldown: 0,
 
-	data: new SlashCommandBuilder()
-		.setName("ping")
-		.setDescription("⎾🔨 Utility⏌ Displays latency details."),
+	data: MoraleCommand("Ping"),
 
 	async execute(interaction) {
 

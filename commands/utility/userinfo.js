@@ -1,16 +1,11 @@
 const { MessageEmbed } = require("discord.js");
 const { DateTime } = require("luxon");
-const { SlashCommandBuilder } = require("@discordjs/builders");
+const { MoraleUserCommand } = require("../../utility/morale-commands.js ");
 
 module.exports = {
 	cooldown: 2,
 
-	data: new SlashCommandBuilder()
-		.setName("userinfo")
-		.setDescription("⎾🔨 Utility⏌ Displays information about a user.")
-		.addUserOption((option) =>
-			option.setName("user").setDescription("Specify a user.")
-		),
+	data: MoraleUserCommand("UserInfo"),
 
 	async execute(interaction) {
 		let guildMember;

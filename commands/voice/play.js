@@ -1,6 +1,6 @@
 const fs = require("fs");
 const { join } = require("path");
-const { SlashCommandBuilder } = require("@discordjs/builders");
+const { MoraleStrCommand } = require("../../utility/morale-commands.js ");
 const { getVoiceConnection, joinVoiceChannel, createAudioPlayer, createAudioResource } = require("@discordjs/voice");
 
 /*
@@ -10,15 +10,7 @@ const { getVoiceConnection, joinVoiceChannel, createAudioPlayer, createAudioReso
 */
 
 module.exports = {
-	data: new SlashCommandBuilder()
-		.setName("play")
-		.setDescription("Play audio files.")
-		.addStringOption((option) =>
-			option
-				.setName("input")
-				.setDescription("Choices: david, joey, goddammit, pepperoncini, bonk, animal, or bingbong")
-				.setRequired(true)
-		),
+	data: MoraleStrCommand("Play"),
 
 	async execute(interaction) {
 		// Grab the voice channel and request from the User

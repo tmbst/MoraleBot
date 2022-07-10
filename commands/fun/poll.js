@@ -1,5 +1,5 @@
 const { MessageEmbed } = require("discord.js");
-const { SlashCommandBuilder } = require("@discordjs/builders");
+const { MoraleStrCommand } = require("../../utility/morale-commands.js ");
 
 /*
 	Slash Command: Poll
@@ -10,15 +10,7 @@ const { SlashCommandBuilder } = require("@discordjs/builders");
 module.exports = {
 	cooldown: 3,
 
-	data: new SlashCommandBuilder()
-		.setName("poll")
-		.setDescription("Create a new poll.")
-		.addStringOption((option) =>
-			option
-				.setName("input")
-				.setDescription("Enter a string")
-				.setRequired(true)
-		),
+	data: MoraleStrCommand("Poll"),
 
 	async execute(interaction) {
 		// Verify user has arguments in quotes to capture the options

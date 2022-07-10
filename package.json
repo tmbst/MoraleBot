@@ -30,9 +30,12 @@
     "discord.js": "^13.6.0",
     "events": "^3.3.0",
     "ffmpeg-static": "^4.4.1",
+    "figlet": "^1.5.2",
+    "glob": "^7.2.3",
     "libsodium-wrappers": "^0.7.9",
     "luxon": "^2.3.0",
-    "mongodb": "^4.3.1"
+    "mongodb": "^4.3.1",
+    "winston": "^3.8.1"
   },
   "devDependencies": {
     "jest": "^27.4.7"
