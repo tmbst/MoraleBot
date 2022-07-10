@@ -3,7 +3,7 @@ const { boostedRoleId } = require("../../config.json");
 const Canvas = require("canvas");
 const { MessageAttachment } = require("discord.js");
 const path = require("path");
-const { MoraleCommand } = require("../../utility/morale-commands.js ");
+const { MoraleCommand } = require("../../utility/morale-commands.js");
 
 module.exports = {
 	cooldown: 3,

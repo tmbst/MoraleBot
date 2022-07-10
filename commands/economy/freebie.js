@@ -1,5 +1,5 @@
 const dbFunctions = require("../../database/dbFunctions");
-const { MoraleCommand } = require("../../utility/morale-commands.js ");
+const { MoraleCommand } = require("../../utility/morale-commands.js");
 const { freebieAmount } = require("../../config.json");
 
 module.exports = {

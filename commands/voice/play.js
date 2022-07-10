@@ -1,6 +1,6 @@
 const fs = require("fs");
 const { join } = require("path");
-const { MoraleStrCommand } = require("../../utility/morale-commands.js ");
+const { MoraleStrCommand } = require("../../utility/morale-commands.js");
 const { getVoiceConnection, joinVoiceChannel, createAudioPlayer, createAudioResource } = require("@discordjs/voice");
 
 /*
