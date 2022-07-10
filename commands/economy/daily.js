@@ -1,7 +1,7 @@
 const dbFunctions = require("../../database/dbFunctions");
 const { dailyAmount, dailyMultiplier, boostedRoleId } = require("../../config.json");
 const { DateTime, Duration } = require("luxon");
-const { MoraleCommand } = require("../../utility/morale-commands.js ");
+const { MoraleCommand } = require("../../utility/morale-commands.js");
 const { MessageEmbed, MessageAttachment } = require("discord.js");
 
 module.exports = {

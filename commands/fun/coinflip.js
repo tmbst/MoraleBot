@@ -1,6 +1,6 @@
 const { MessageActionRow, MessageButton } = require("discord.js");
 const dbFunctions = require("../../database/dbFunctions.js");
-const { MoraleIntCommand } = require("../../utility/morale-commands.js ");
+const { MoraleIntCommand } = require("../../utility/morale-commands.js");
 const rng = require("../../systems/rng.js");
 
 module.exports = {

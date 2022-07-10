@@ -1,5 +1,5 @@
 const fs = require("fs");
-const { MoraleCommand } = require("../../utility/morale-commands.js ");
+const { MoraleCommand } = require("../../utility/morale-commands.js");
 const { getVoiceConnection } = require("@discordjs/voice");
 
 /*

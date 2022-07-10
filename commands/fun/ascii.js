@@ -1,5 +1,5 @@
 const { MessageEmbed } = require("discord.js");
-const { MoraleStrCommand } = require("../../utility/morale-commands.js ");
+const { MoraleStrCommand } = require("../../utility/morale-commands.js");
 const { GenerateAscii } = require('../../utility/ascii-generator.js');
 
 /*

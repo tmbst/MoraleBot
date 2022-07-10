@@ -1,4 +1,4 @@
-const { MoraleCommand } = require("../../utility/morale-commands.js ");
+const { MoraleCommand } = require("../../utility/morale-commands.js");
 const { MessageEmbed } = require('discord.js');
 
 module.exports = {

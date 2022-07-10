@@ -1,6 +1,6 @@
 const { MessageEmbed } = require("discord.js");
 const { DateTime } = require("luxon");
-const { MoraleUserCommand } = require("../../utility/morale-commands.js ");
+const { MoraleUserCommand } = require("../../utility/morale-commands.js");
 
 module.exports = {
 	cooldown: 2,
