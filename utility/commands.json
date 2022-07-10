@@ -40,5 +40,11 @@
 		"desc": "Play audio files.",
 		"strDesc": "Choices: david, joey, goddammit, pepperoncini, bonk, animal, or bingbong",
         "required": true
+	},
+    "Ascii": {
+		"name": "ascii",
+		"desc": "Creates Ascii Text Art in Chat",
+		"strDesc": "Enter a string between 1-30 characters.",
+        "required": true
 	}
 }

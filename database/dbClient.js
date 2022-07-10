@@ -1,5 +1,6 @@
 const { MongoClient } = require("mongodb");
 const { mongoURI } = require("../config.json");
+const { logger } = require('../utility/logger.js');
 
 let mongoClient;
 
@@ -13,9 +14,10 @@ module.exports = {
 		try {
 			// Connect to the MongoDB cluster
 			await mongoClient.connect();
-			console.log("[LOGS] Connected to MongoDB Servers.");
+			logger.info("Connected to MongoDB Servers.");
 		} catch (error) {
-			console.error(error);
+			logger.error(error);
+
 		}
 	},
 
