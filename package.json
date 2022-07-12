@@ -36,7 +36,8 @@
     "logform": "^2.4.2",
     "luxon": "^2.3.0",
     "mongodb": "^4.3.1",
-    "winston": "^3.8.1"
+    "winston": "^3.8.1",
+    "needle": "^3.1.0"
   },
   "devDependencies": {
     "jest": "^27.4.7"
