@@ -5,7 +5,7 @@ const needle = require('needle');
 
 module.exports = {
 
-  cooldown: 0,
+  cooldown: 3,
   data: new ContextMenuCommandBuilder()
     .setName("unroll_twitter_thread")
     .setType(3),
@@ -19,6 +19,13 @@ module.exports = {
    */
   async execute(interaction) {
     const tweetMessage = interaction.targetMessage;
+    if (tweetMessage.hasThread) {
+      interaction.reply("That message already has a thread.");
+      return;
+    } else if (tweetMessage.channel.type != "GUILD_TEXT") {
+      interaction.reply("You can't use that command in this channel.");
+      return;
+    }
     const messageWords = tweetMessage.content.split(' ');
   	for (const word of messageWords) {
   		if (word.includes("twitter.com")) {
@@ -28,7 +35,7 @@ module.exports = {
         return;
       }
     }
-    const response = "Couldn't find a tweet.";
+    const response = "Couldn't find a tweet in that message.";
     interaction.reply(response);
   },
 
@@ -152,7 +159,7 @@ module.exports = {
     const tweet = await this.getTweet(tweetId);
     const attachments = tweet.body.includes;
     const tweetDetails = tweet.body.data[0];
-    if (!authorDetails) {
+    if (!authorDetails || tweetDetails.author_id != authorDetails.id) {
       authorDetails = await this.getAuthorDetails(tweetDetails.author_id);
     }
     if (isNotQuoteTweet) {
