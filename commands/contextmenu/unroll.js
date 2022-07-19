@@ -10,6 +10,17 @@ module.exports = {
     .setName("unroll_twitter_thread")
     .setType(3),
 
+  //Success Responses
+  historicalThreadResponse: "Unrolling Thread! If it's old, I might not have found the whole thing. I can always unroll the whole thread if you post the last tweet in the thread.",
+  recentThreadResponse: "Unrolling Thread!",
+
+  //400 Error Responses
+  singleTweetResponse: "I could only find one tweet in this thread, but that might be because it's too old. If so, I can still unroll this thread if you post the last tweet in the thread.",
+  threadAlreadyExistsResponse: "That message already has a thread.",
+  wrongChannelResponse: "You can't use that command in this channel.",
+  tweetIdNotFoundResponse: "Couldn't find a tweet in that message.",
+  tweetNotFoundResponse: "Couldn't find that tweet",
+
   /**
    * Wrapper for unroll functionality.
    * Initiated by user command.
@@ -20,10 +31,10 @@ module.exports = {
   async execute(interaction) {
     const tweetMessage = interaction.targetMessage;
     if (tweetMessage.hasThread) {
-      interaction.reply("That message already has a thread.");
+      interaction.reply(this.threadAlreadyExistsResponse);
       return;
     } else if (tweetMessage.channel.type != "GUILD_TEXT") {
-      interaction.reply("You can't use that command in this channel.");
+      interaction.reply(this.wrongChannelResponse);
       return;
     }
     const messageWords = tweetMessage.content.split(' ');
@@ -35,8 +46,7 @@ module.exports = {
         return;
       }
     }
-    const response = "Couldn't find a tweet in that message.";
-    interaction.reply(response);
+    interaction.reply(this.tweetIdNotFoundResponse);
   },
 
   /**
@@ -55,23 +65,26 @@ module.exports = {
    * in which to create a new Discord thread.
    */
   async unroll(tweetId, interaction) {
-    let response = "";
 		const tweet = await this.getTweet(tweetId);
+    if (!tweet.body.data) {
+      interaction.reply(this.tweetNotFoundResponse);
+      return;
+    }
     const tweetDetails = tweet.body.data[0];
     const authorDetails = await this.getAuthorDetails(tweetDetails.author_id);
     const lastTweetDetails = await this.queryLastTweet(tweetDetails);
-    if (!lastTweetDetails) response += "Couldn't find the whole thread since it's more than a week old.\n";
+    const isHistorical = lastTweetDetails ? false : true;
     const rootTweetDetails = lastTweetDetails ? lastTweetDetails : tweetDetails;
     if (!this.getReferencedTweetId(rootTweetDetails)) {
-      response += "Nothing to unroll. That's the whole thread!";
-      interaction.reply(response);
+      interaction.reply(this.singleTweetResponse);
       return;
     }
+    const discordThreadName = "Twitter Thread by " + authorDetails.username;
     const unrollThread = await interaction.targetMessage.startThread({
-      name: "Twitter Thread Unrolled",
+      name: discordThreadName,
       autoArchiveDuration: 1440
     });
-    response += "Unrolling Thread!";
+    response = isHistorical ?  this.historicalThreadResponse : this.recentThreadResponse;
     interaction.reply(response);
     this.printTweet(rootTweetDetails.id, unrollThread, authorDetails, true);
   },
