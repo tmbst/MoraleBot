@@ -11,11 +11,9 @@ module.exports = {
 	name: "interactionCreate",
 
 	async execute(interaction) {
-		if (!interaction.isCommand()) return;
+		if (!interaction.isCommand() && !interaction.isContextMenu()) return;
 
-		const command = interaction.client.commands.get(
-			interaction.commandName
-		);
+		const command = interaction.client.commands.get(interaction.commandName);
 
 		if (!command) return;
 
@@ -26,17 +24,24 @@ module.exports = {
 
 		const now = Date.now();
 		const timestamps = cooldowns.get(command.name);
-		const cooldownAmount = command.cooldown ? (command.cooldown || 3) * 1000 : 0;
+		const cooldownAmount = command.cooldown
+			? (command.cooldown || 3) * 1000
+			: 0;
 
 		if (timestamps.has(interaction.member.user.id)) {
-			const expirationTime = timestamps.get(interaction.member.user.id) + cooldownAmount;
+			const expirationTime =
+				timestamps.get(interaction.member.user.id) + cooldownAmount;
 
 			if (now < expirationTime) {
 				const timeLeft = (expirationTime - now) / 1000;
 				return await interaction.reply({
-                    content: `⌚️ Please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.data.name}\` command.`,
-                    ephemeral: true,
-                });
+					content: `⌚️ Please wait ${timeLeft.toFixed(
+						1
+					)} more second(s) before reusing the \`${
+						command.data.name
+					}\` command.`,
+					ephemeral: true,
+				});
 			}
 		}
 
@@ -52,11 +57,14 @@ module.exports = {
 			await command.execute(interaction);
 		} catch (error) {
 			console.error(error);
-
-			await interaction.reply({
-				content: "There was an error while executing this command!",
-				ephemeral: true,
-			});
+			try {
+				await interaction.reply({
+					content: "There was an error while executing this command!",
+					ephemeral: true,
+				});
+			} catch (timeout) {
+				console.error(timeout);
+			}
 		}
 	},
 };

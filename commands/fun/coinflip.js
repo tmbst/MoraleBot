@@ -1,18 +1,13 @@
 const { MessageActionRow, MessageButton } = require("discord.js");
 const dbFunctions = require("../../database/dbFunctions.js");
-const { SlashCommandBuilder } = require("@discordjs/builders");
+const { MoraleIntCommand } = require("../../utility/morale-commands.js");
 const rng = require("../../systems/rng.js");
 
 module.exports = {
 	cooldown: 4,
 	roll: 2,
 
-	data: new SlashCommandBuilder()
-		.setName("coinflip")
-		.setDescription("⎾🎉 Fun⏌Flip a coin! Optionally, bet some Morale.")
-		.addIntegerOption((option) =>
-			option.setName("int").setDescription("Bet Amount")
-		),
+	data: MoraleIntCommand("Coinflip"),
 
 	async execute(interaction) {
 		const bet = interaction.options.getInteger("int");

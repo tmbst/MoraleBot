@@ -1,15 +1,13 @@
-const { MessageEmbed } = require("discord.js");
-const { DateTime } = require("luxon");
-const { MoraleUserCommand } = require("../../utility/morale-commands.js");
+const { ContextMenuCommandBuilder } = require("@discordjs/builders");
 
 module.exports = {
 	cooldown: 2,
 
-	data: MoraleUserCommand("UserInfo"),
+	data: new ContextMenuCommandBuilder().setName("userinfo").setType(2),
 
 	async execute(interaction) {
 		let guildMember;
-		let user = interaction.options.getUser("user");
+		let user = interaction.targetUser;
 
 		// Extract optional mentionable if it exists, otherwise get the user who called the interaction
 		if (user != null) {

@@ -1,13 +1,11 @@
 const dbFunctions = require("../../database/dbFunctions");
-const { SlashCommandBuilder } = require("@discordjs/builders");
+const { MoraleCommand } = require("../../utility/morale-commands.js");
 const { freebieAmount } = require("../../config.json");
 
 module.exports = {
 	cooldown: 3,
 
-	data: new SlashCommandBuilder()
-		.setName("freebie")
-		.setDescription("⎾💵 Economy⏌ Snag some spare change."),
+	data: MoraleCommand('Freebie'),
 
 	async execute(interaction) {
 		const guildData = interaction.guild;

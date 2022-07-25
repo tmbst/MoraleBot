@@ -1,15 +1,13 @@
 const dbFunctions = require("../../database/dbFunctions");
 const { dailyAmount, dailyMultiplier, boostedRoleId } = require("../../config.json");
 const { DateTime, Duration } = require("luxon");
-const { SlashCommandBuilder } = require("@discordjs/builders");
+const { MoraleCommand } = require("../../utility/morale-commands.js");
 const { MessageEmbed, MessageAttachment } = require("discord.js");
 
 module.exports = {
 	cooldown: 3,
 
-	data: new SlashCommandBuilder()
-		.setName("daily")
-		.setDescription("⎾💵 Economy⏌ Obtain your dailies. Resets at midnight PST."),
+	data: MoraleCommand("Daily"),
 
 	async execute(interaction) {
 		const guildData = interaction.guild;

@@ -7,6 +7,7 @@ const client = new Client({
 	intents: [
 		Intents.FLAGS.GUILDS,
 		Intents.FLAGS.GUILD_MEMBERS,
+		Intents.FLAGS.GUILD_MESSAGES,
 		Intents.FLAGS.GUILD_VOICE_STATES,
 	],
 });
@@ -16,7 +17,6 @@ client.commands = new Collection();
 const commandFolders = fs.readdirSync("./commands");
 
 for (const folder of commandFolders) {
-
 	const commandFiles = fs
 		.readdirSync(`./commands/${folder}`)
 		.filter((file) => file.endsWith(".js"));
@@ -39,8 +39,7 @@ for (const file of eventFiles) {
 		client.once(event.name, (...args) =>
 			event.execute(...args, database.getMongoClient())
 		);
-	}
-    else {
+	} else {
 		client.on(event.name, (...args) =>
 			event.execute(...args, database.getMongoClient())
 		);
